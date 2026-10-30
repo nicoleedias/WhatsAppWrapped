@@ -20,5 +20,9 @@
 	</array>
 	<key>LSSupportsOpeningDocumentsInPlace</key>
 	<false/>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Nunito.ttf</string>
+	</array>
 </dict>
 </plist>
