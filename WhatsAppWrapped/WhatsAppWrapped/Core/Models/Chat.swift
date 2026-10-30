@@ -18,6 +18,8 @@ nonisolated struct Chat: Sendable {
     let isGroup: Bool
     /// Quem exportou: o autor de "Você apagou esta mensagem" / "You deleted this message".
     let exporter: String?
+    /// Nome da conversa (`ChatTitle`). nil quando não aparece no arquivo nem nas mensagens de sistema.
+    var title: String?
 
     var authors: [String] {
         var seen = Set<String>()

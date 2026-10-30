@@ -14,7 +14,9 @@ nonisolated enum WrappedService {
     @concurrent
     static func makeStats(fileURL: URL, period: ClosedRange<Date>? = nil) async throws -> WrappedStats {
         let text = try ChatImporter.chatText(from: fileURL)
-        guard let chat = try? ChatParser.parse(text) else { throw ChatImporter.ImportError.notAWhatsAppChat }
+        guard var chat = try? ChatParser.parse(text) else { throw ChatImporter.ImportError.notAWhatsAppChat }
+        // O nome do arquivo é o nome atual da conversa; as mensagens de sistema podem ser antigas.
+        if let title = ChatTitle.fromFileName(fileURL.lastPathComponent) { chat.title = title }
         return makeStats(from: chat, period: period)
     }
 
@@ -38,6 +40,7 @@ nonisolated enum WrappedService {
             period: .init(start: period.lowerBound, end: period.upperBound),
             participants: participants,
             exporter: chat.exporter,
+            title: chat.title,
             messages: messageStats,
             laughs: LaughAnalyzer.analyze(messages),
             emojis: EmojiAnalyzer.analyze(messages),
