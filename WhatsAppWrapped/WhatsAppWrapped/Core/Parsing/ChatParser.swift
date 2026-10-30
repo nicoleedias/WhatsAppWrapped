@@ -64,7 +64,8 @@ nonisolated enum ChatParser {
             calls: calls,
             membershipChanges: membershipChanges,
             isGroup: authorCount > 2 || createdGroup || !membershipChanges.isEmpty,
-            exporter: exporter
+            exporter: exporter,
+            title: ChatTitle.fromSystemEvents(systemEvents)
         )
     }
 

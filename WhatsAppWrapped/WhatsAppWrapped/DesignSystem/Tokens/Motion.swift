@@ -54,6 +54,12 @@ extension View {
     }
 }
 
+extension EnvironmentValues {
+    /// false desliga as entradas: a view já aparece no lugar. Usado ao gerar a imagem de compartilhar,
+    /// em que o `onAppear` não roda e tudo ficaria invisível.
+    @Entry var showsEntrances = true
+}
+
 /// Fade de entrada + uma transformação extra. Sem a transformação com "Reduzir movimento".
 private struct AppearAnimation: ViewModifier {
     enum Effect {
@@ -66,14 +72,16 @@ private struct AppearAnimation: ViewModifier {
     let animation: Animation
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.showsEntrances) private var showsEntrances
     @State private var isVisible = false
 
     func body(content: Content) -> some View {
-        let isSettled = isVisible || reduceMotion
+        let isShown = isVisible || !showsEntrances
+        let isSettled = isShown || reduceMotion
         content
             .offset(y: isSettled ? 0 : riseOffset)
             .scaleEffect(isSettled ? 1 : startScale)
-            .opacity(isVisible ? 1 : 0)
+            .opacity(isShown ? 1 : 0)
             .onAppear {
                 withAnimation(animation.delay(delay)) { isVisible = true }
             }

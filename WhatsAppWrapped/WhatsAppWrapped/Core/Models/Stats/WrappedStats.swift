@@ -16,6 +16,8 @@ nonisolated struct WrappedStats: Codable, Sendable {
     let participants: [String]
     /// Quem exportou a conversa, para os slides dizerem "Você". nil quando não dá para saber.
     let exporter: String?
+    /// Nome da conversa ou do grupo. nil quando não dá para saber.
+    let title: String?
     let messages: MessageStats        // 08, 19, 20
     let laughs: LaughStats            // 09
     let emojis: EmojiStats            // 10–11
