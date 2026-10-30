@@ -14,7 +14,7 @@ struct RebobinaButtonStyle: ButtonStyle {
         case primary
         /// Ação principal em fundos escuros ("Começar").
         case primaryOnDark
-        /// Ação alternativa, com contorno.
+        /// Ação alternativa, com contorno na cor do texto do fundo ("Ver de novo" no resumo, sobre ameixa).
         case secondary
         /// Apagar ou sair. Sempre com confirmação.
         case destructive
@@ -24,6 +24,7 @@ struct RebobinaButtonStyle: ButtonStyle {
 
     let kind: Kind
     @Environment(\.isEnabled) private var isEnabled
+    @Environment(\.backdrop) private var backdrop
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
@@ -33,7 +34,7 @@ struct RebobinaButtonStyle: ButtonStyle {
             .frame(maxWidth: .infinity, minHeight: 56)
             .background(background, in: .capsule)
             .overlay {
-                if kind == .secondary { Capsule().strokeBorder(.ink, lineWidth: 1.5) }
+                if kind == .secondary { Capsule().strokeBorder(backdrop.foreground, lineWidth: 1.5) }
             }
             .contentShape(.capsule)
             .opacity(isEnabled ? 1 : 0.4)
@@ -44,7 +45,8 @@ struct RebobinaButtonStyle: ButtonStyle {
     private var foreground: Color {
         switch kind {
         case .primary, .destructive: .cream
-        case .primaryOnDark, .secondary, .ghost: .ink
+        case .primaryOnDark: .ink
+        case .secondary, .ghost: backdrop.foreground
         }
     }
 

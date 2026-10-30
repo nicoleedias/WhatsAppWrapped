@@ -13,7 +13,8 @@ struct ShareButton: View {
 
     var body: some View {
         Button("Compartilhar", action: action)
-            .textStyle(.label)
+            // Como no Figma: 12 SemiBold, sem caixa alta (o `.label` deixaria "COMPARTILHAR").
+            .textStyle(TextStyle(size: 12, weight: .semibold, relativeTo: .caption))
             .foregroundStyle(backdrop.foreground)
             .padding(.horizontal, 14)
             .padding(.vertical, 8)

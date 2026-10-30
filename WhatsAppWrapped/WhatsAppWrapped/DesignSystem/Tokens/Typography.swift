@@ -73,4 +73,14 @@ extension View {
             .lineHeight(style.lineHeight.map { .exact(points: $0) })
             .textCase(style.uppercase ? .uppercase : nil)
     }
+
+    /// Uma linha só, que encolhe até `minimumScale` quando não cabe na largura.
+    /// O `fixedSize` vertical contorna um bug do SwiftUI: com `lineHeight` exato, o `minimumScaleFactor`
+    /// encolhe o texto até o mínimo mesmo quando ele cabe.
+    func textStyle(_ style: TextStyle, minimumScale: CGFloat) -> some View {
+        textStyle(style)
+            .lineLimit(1)
+            .minimumScaleFactor(minimumScale)
+            .fixedSize(horizontal: false, vertical: true)
+    }
 }

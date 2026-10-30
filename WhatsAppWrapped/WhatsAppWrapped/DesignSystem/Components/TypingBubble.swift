@@ -4,15 +4,24 @@
 //
 //  Balão "digitando…" com três pontos que sobem 4 pt e acendem em onda
 //  (defasagem de 0,18 s, loop de 1,2 s). Com "Reduzir movimento", os pontos ficam parados.
+//  Claro (creme com pontos de tinta) no carregamento; escuro (tinta com pontos creme) no slide de resposta.
 //
 
 import SwiftUI
 
 struct TypingBubble: View {
+    enum Style {
+        case light, dark
+
+        var background: Color { self == .light ? .cream : .ink }
+        var dot: Color { self == .light ? .ink : .cream }
+    }
+
     static let loopDuration = 1.2
     static let stagger = 0.18
     static let dotCount = 3
 
+    var style: Style = .light
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
@@ -21,8 +30,9 @@ struct TypingBubble: View {
                 TypingDot(delay: Double(index) * Self.stagger, isAnimated: !reduceMotion)
             }
         }
+        .foregroundStyle(style.dot)
         .padding(28)
-        .background(.cream, in: BubbleShape(radius: 32, tail: .bottomLeading))
+        .background(style.background, in: BubbleShape(radius: 32, tail: .bottomLeading))
         .accessibilityElement()
         .accessibilityLabel("Digitando")
     }
@@ -36,6 +46,7 @@ private struct TypingDot: View {
 
     var body: some View {
         Image(.typingDot)
+            .renderingMode(.template)
             .keyframeAnimator(initialValue: Pose(), repeating: isAnimated) { dot, pose in
                 dot.opacity(pose.opacity).offset(y: pose.y)
             } keyframes: { _ in
@@ -62,5 +73,10 @@ private struct TypingDot: View {
 }
 
 #Preview {
-    TypingBubble().padding().background(.coral)
+    VStack {
+        TypingBubble()
+        TypingBubble(style: .dark)
+    }
+    .padding()
+    .background(.coral)
 }

@@ -15,10 +15,9 @@ struct WavesDecoration: View {
         /// Quanto a onda desliza.
         let slide: CGFloat
         var rotation: Double = 8
+        /// Tamanho da imagem: 480×90 mais a espessura do traço (40 nas telas de importação, 44 ou 36 nos slides).
+        var size = CGSize(width: 520, height: 130)
     }
-
-    /// Tamanho da imagem da onda (480×90 mais a espessura do traço).
-    static let size = CGSize(width: 520, height: 130)
 
     let waves: [Wave]
 
@@ -31,7 +30,7 @@ struct WavesDecoration: View {
                 let wave = waves[index]
                 Image(wave.image)
                     .resizable()
-                    .frame(width: scale.length(Self.size.width), height: scale.length(Self.size.height))
+                    .frame(width: scale.length(wave.size.width), height: scale.length(wave.size.height))
                     .rotationEffect(.degrees(wave.rotation))
                     .offset(x: hasSlid ? 0 : -wave.slide)
                     .position(scale.point(wave.center))

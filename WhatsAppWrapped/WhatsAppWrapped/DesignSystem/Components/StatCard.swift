@@ -32,11 +32,9 @@ struct StatCard: View {
                 .textStyle(.title)
                 .accessibilityHidden(true)
             Text(value)
-                .textStyle(.heading2)
-                .lineLimit(1)
-                .minimumScaleFactor(0.6)
+                .textStyle(.heading2, minimumScale: 0.6)
             Text(caption)
-                .textStyle(.bodyS)
+                .textStyle(TextStyle(size: 14, weight: .semibold, relativeTo: .subheadline))
         }
         .foregroundStyle(.ink)
         .padding(.horizontal, 20)

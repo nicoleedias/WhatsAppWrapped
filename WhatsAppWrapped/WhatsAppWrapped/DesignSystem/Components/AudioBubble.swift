@@ -14,12 +14,18 @@ struct AudioBubble: View {
         var background: Color { self == .you ? .ink : .cream }
         var foreground: Color { self == .you ? .cream : .ink }
         var playBackground: Color { self == .you ? .lime : .coralDeep }
-        var playForeground: Color { self == .you ? .ink : .cream }
+        /// O ▶ é tinta nos dois lados, como no Figma.
+        var playForeground: Color { .ink }
         var tail: BubbleShape.Tail { self == .you ? .bottomTrailing : .bottomLeading }
-    }
 
-    /// Alturas das barras do waveform no Figma.
-    static let waveform: [CGFloat] = [8, 22, 26, 16, 16, 26, 22, 8, 22, 25, 15, 16, 26, 22, 9, 22, 25, 15, 17, 26, 22, 9]
+        /// Alturas das barras do waveform no Figma (cada lado tem o seu desenho).
+        var waveform: [CGFloat] {
+            switch self {
+            case .you: [8, 22, 26, 16, 16, 26, 22, 8, 22, 25, 15, 16, 26, 22, 9, 22, 25, 15, 17, 26, 22, 9]
+            case .contact: [23, 25, 14, 18, 26, 21, 10, 23, 25, 14, 18, 26, 20, 10, 23, 25, 13, 18, 26, 20, 11, 24]
+            }
+        }
+    }
 
     let duration: String
     let side: Side
@@ -32,9 +38,9 @@ struct AudioBubble: View {
                 .frame(width: 40, height: 40)
                 .background(side.playBackground, in: .circle)
             HStack(spacing: 3) {
-                ForEach(Self.waveform.indices, id: \.self) { index in
+                ForEach(side.waveform.indices, id: \.self) { index in
                     RoundedRectangle(cornerRadius: 2)
-                        .frame(width: 3, height: Self.waveform[index])
+                        .frame(width: 3, height: side.waveform[index])
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
