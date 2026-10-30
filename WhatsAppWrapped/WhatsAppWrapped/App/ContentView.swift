@@ -51,5 +51,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView(viewModel: AppViewModel(phraseGenerator: GeminiPhraseGenerator()))
+    ContentView(viewModel: AppViewModel(phraseGenerator: PreviewPhraseGenerator()))
 }

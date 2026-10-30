@@ -51,5 +51,5 @@ struct ChooseFileView: View {
 }
 
 #Preview {
-    ChooseFileView(viewModel: ImportViewModel(phraseGenerator: GeminiPhraseGenerator()))
+    ChooseFileView(viewModel: ImportViewModel(phraseGenerator: PreviewPhraseGenerator()))
 }
