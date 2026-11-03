@@ -18,7 +18,10 @@ struct WhatsAppWrappedApp: App {
     init() {
         AppCheck.setAppCheckProviderFactory(WrappedAppCheckProviderFactory())
         FirebaseApp.configure()
-        _viewModel = State(initialValue: AppViewModel(phraseGenerator: GeminiPhraseGenerator()))
+        _viewModel = State(initialValue: AppViewModel(
+            phraseGenerator: GeminiPhraseGenerator(),
+            store: FileRetrospectiveStore()
+        ))
     }
 
     var body: some Scene {

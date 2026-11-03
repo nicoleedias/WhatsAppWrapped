@@ -52,48 +52,8 @@ struct SummaryView: View {
         }
     }
 
-    /// Story 9:16 com o card, a decoração e a nota de fonte, no tamanho do frame do Figma.
     private func renderShareImage() {
-        let poster = ScreenContainer(backdrop: .plum) {
-            BurstDecoration.summary
-        } content: {
-            Spacer(minLength: 0)
-            SummaryCard(viewModel: viewModel)
-            Spacer(minLength: 0)
-        }
-        .sourceNote()
-        .frame(width: FigmaScale.frame.width, height: FigmaScale.frame.height)
-        .environment(\.showsEntrances, false)
-
-        let renderer = ImageRenderer(content: poster)
-        renderer.scale = displayScale
-        shareImage = renderer.uiImage.map { Image(uiImage: $0) }
-    }
-}
-
-/// Cabeçalho, total, destaques e quem demora mais. Igual na tela e na imagem compartilhada.
-private struct SummaryCard: View {
-    let viewModel: SummaryViewModel
-
-    var body: some View {
-        VStack(spacing: 8) {
-            SummaryHeader(participants: viewModel.participants, title: viewModel.title, subtitle: viewModel.subtitle)
-            SummaryHero(messageCount: viewModel.messageCount)
-            SummaryStatGrid(stats: viewModel.highlights.map(stat))
-            if let slowest = viewModel.slowestResponder {
-                SummaryHighlight(value: slowest)
-            }
-        }
-    }
-
-    private func stat(_ highlight: SummaryViewModel.Highlight) -> SummaryStatGrid.Stat {
-        let tint: StatCard.Tint = switch highlight.kind {
-        case .emoji: .rose
-        case .laughs: .butter
-        case .streak: .coral
-        case .peakHour: .lilac
-        }
-        return .init(emoji: highlight.emoji, value: highlight.value, caption: highlight.caption, tint: tint)
+        shareImage = SummaryCard.shareImage(for: viewModel, scale: displayScale)
     }
 }
 

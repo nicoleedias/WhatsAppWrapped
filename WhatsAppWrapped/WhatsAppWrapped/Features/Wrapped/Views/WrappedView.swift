@@ -10,6 +10,7 @@ import SwiftUI
 struct WrappedView: View {
     let result: WrappedResult
     let startOver: () -> Void
+    let showSummary: () -> Void
 
     var body: some View {
         NavigationStack {
@@ -32,7 +33,10 @@ struct WrappedView: View {
                 }
             }
             .navigationTitle("Resultado")
-            .toolbar { Button("Outra conversa", action: startOver) }
+            .toolbar {
+                Button("Outra conversa", action: startOver)
+                Button("Ver resumo", action: showSummary)
+            }
         }
     }
 }
