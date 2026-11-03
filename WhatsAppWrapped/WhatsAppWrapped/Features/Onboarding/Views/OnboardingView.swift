@@ -9,6 +9,8 @@ import SwiftUI
 
 struct OnboardingView: View {
     let start: () -> Void
+    /// "Já exportei minha conversa": pula o passo a passo e vai direto para o envio do arquivo.
+    let alreadyExported: () -> Void
 
     private var year: String {
         Calendar.current.component(.year, from: .now).formatted(.number.grouping(.never))
@@ -23,8 +25,12 @@ struct OnboardingView: View {
                 .textStyle(.bodyL)
                 .entrance(delay: 0.2)
             Spacer(minLength: 0)
-            Button("Começar", action: start)
-                .buttonStyle(.rebobina(.primaryOnDark))
+            VStack(spacing: 8) {
+                Button("Começar", action: start)
+                    .buttonStyle(.rebobina(.primaryOnDark))
+                Button("Já exportei minha conversa", action: alreadyExported)
+                    .buttonStyle(.rebobina(.ghost))
+            }
         } footer: {
             SourceNote(text: "Usa a conversa que você exporta do WhatsApp.\nNão afiliado ao WhatsApp.")
                 .padding(.bottom, 12)
@@ -33,5 +39,5 @@ struct OnboardingView: View {
 }
 
 #Preview {
-    OnboardingView(start: {})
+    OnboardingView(start: {}, alreadyExported: {})
 }

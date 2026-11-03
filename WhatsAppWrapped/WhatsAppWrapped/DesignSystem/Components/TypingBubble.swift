@@ -12,9 +12,18 @@ import SwiftUI
 struct TypingBubble: View {
     enum Style {
         case light, dark
+        /// Estado vazio de "Minhas retrospectivas".
+        case lilac
 
-        var background: Color { self == .light ? .cream : .ink }
-        var dot: Color { self == .light ? .ink : .cream }
+        var background: Color {
+            switch self {
+            case .light: .cream
+            case .dark: .ink
+            case .lilac: .lilac
+            }
+        }
+
+        var dot: Color { self == .dark ? .cream : .ink }
     }
 
     static let loopDuration = 1.2
@@ -76,6 +85,7 @@ private struct TypingDot: View {
     VStack {
         TypingBubble()
         TypingBubble(style: .dark)
+        TypingBubble(style: .lilac)
     }
     .padding()
     .background(.coral)

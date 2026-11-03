@@ -60,7 +60,7 @@ nonisolated struct SlidePhrase: Codable, Sendable, Hashable {
 }
 
 /// Uma frase por slide. Diferente a cada retrospectiva, porque é gerada pela IA.
-nonisolated struct SlidePhrases: Sendable {
+nonisolated struct SlidePhrases: Codable, Sendable {
     private(set) var phrases: [PhraseSlide: SlidePhrase]
 
     init(_ phrases: [PhraseSlide: SlidePhrase] = [:]) {

@@ -10,17 +10,20 @@ import SwiftUI
 
 struct AvatarView: View {
     enum Size: CGFloat {
+        /// Fotos do grupo no cartão de "Minhas retrospectivas".
         case small = 40
         /// Pilha de participantes no resumo do grupo.
         case medium = 44
+        /// Foto do cartão de "Minhas retrospectivas".
+        case card = 56
         case large = 64
         /// Quem está "ligando" no slide de ligações.
         case call = 128
 
         var textStyle: TextStyle {
             switch self {
-            case .small, .large: .title
-            case .medium: TextStyle(size: 16, weight: .extraBold, relativeTo: .headline)
+            case .card, .large: .title
+            case .small, .medium: TextStyle(size: 16, weight: .extraBold, relativeTo: .headline)
             case .call: TextStyle(size: 44, weight: .extraBold, lineHeight: 52, tracking: -0.44, relativeTo: .largeTitle)
             }
         }

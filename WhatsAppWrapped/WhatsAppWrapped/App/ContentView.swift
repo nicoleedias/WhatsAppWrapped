@@ -17,8 +17,15 @@ struct ContentView: View {
     var body: some View {
         ZStack {
             switch viewModel.step {
+            case .retrospectives:
+                RetrospectivesView(
+                    viewModel: viewModel.retrospectives,
+                    openSummary: viewModel.openSummary,
+                    replay: viewModel.replay,
+                    newRetrospective: viewModel.newRetrospective
+                )
             case .onboarding:
-                OnboardingView(start: viewModel.start)
+                OnboardingView(start: viewModel.start, alreadyExported: viewModel.showFilePicker)
             case .exportGuide:
                 ExportGuideView(
                     openWhatsApp: { openURL(AppViewModel.whatsAppURL) },
@@ -27,8 +34,12 @@ struct ContentView: View {
             case .importing:
                 ImportFlowView(viewModel: viewModel.importer, showWrapped: viewModel.showWrapped)
             case .wrapped:
-                if let result = viewModel.importer.result {
-                    WrappedView(result: result, startOver: viewModel.startOver)
+                if let result = viewModel.current {
+                    WrappedView(result: result, startOver: viewModel.startOver, showSummary: viewModel.showSummary)
+                }
+            case .summary:
+                if let result = viewModel.current {
+                    SummaryView(viewModel: SummaryViewModel(result: result), replay: viewModel.replayCurrent)
                 }
             }
         }
@@ -51,5 +62,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView(viewModel: AppViewModel(phraseGenerator: PreviewPhraseGenerator()))
+    ContentView(viewModel: AppViewModel(phraseGenerator: PreviewPhraseGenerator(), store: PreviewRetrospectiveStore()))
 }

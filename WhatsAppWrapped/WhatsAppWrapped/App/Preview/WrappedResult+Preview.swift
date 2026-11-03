@@ -8,7 +8,7 @@
 import Foundation
 
 extension WrappedResult {
-    static let preview = WrappedResult(
+    nonisolated static let preview = WrappedResult(
         stats: .preview(
             isGroup: false,
             title: "Bia",
@@ -23,7 +23,7 @@ extension WrappedResult {
         phrases: SlidePhrases()
     )
 
-    static let previewGroup = WrappedResult(
+    nonisolated static let previewGroup = WrappedResult(
         stats: .preview(
             isGroup: true,
             title: "Rolê de sexta",
@@ -41,7 +41,7 @@ extension WrappedResult {
 
 private extension WrappedStats {
     /// Só os campos que os slides usam têm valores de verdade; o resto fica vazio.
-    static func preview(
+    nonisolated static func preview(
         isGroup: Bool,
         title: String,
         participants: [String],
