@@ -3,16 +3,26 @@
 //  WhatsAppWrapped
 //
 //  Telas 04–06: "Analisando mensagens" com o balão digitando e a frase de baixo trocando a cada 2 s,
-//  enquanto a conversa é analisada e a IA escreve as frases.
+//  em ordem aleatória, enquanto a conversa é analisada e a IA escreve as frases.
 //
 
 import SwiftUI
 
 struct LoadingView: View {
     static let captions = [
-        "Contando quantos “kkkkk” você mandou.",
-        "Medindo seus textões…",
-        "Caçando seu emoji favorito…",
+        "Contando quantos “kkkkk” vocês mandaram…",
+        "Medindo os textões…",
+        "Caçando o emoji favorito de vocês…",
+        "Descobrindo quem some sem avisar…",
+        "Cronometrando quem demora pra responder…",
+        "Somando os áudios de 5 minutos…",
+        "Separando as figurinhas…",
+        "Contando as ligações…",
+        "Vendo quem conversa de madrugada…",
+        "Folheando o rolo da câmera…",
+        "Achando a palavra que vocês mais falam…",
+        "Calculando a maior sequência de dias…",
+        "Procurando o maior textão do ano…",
     ]
 
     var body: some View {

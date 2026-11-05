@@ -1,5 +1,5 @@
 //
-//  AppViewModel.swift
+//  AppCoordinator.swift
 //  WhatsAppWrapped
 //
 //  Navegação entre as partes do app: minhas retrospectivas (00), onboarding (01–02), importação (03–07),
@@ -15,7 +15,7 @@ import Foundation
 import Observation
 
 @Observable
-final class AppViewModel {
+final class AppCoordinator {
     enum Step: Equatable {
         case retrospectives // 00
         case onboarding     // 01
@@ -33,6 +33,8 @@ final class AppViewModel {
     let retrospectives: RetrospectivesViewModel
     /// Retrospectiva aberta nos slides ou no resumo: a que acabou de ser feita ou uma da lista.
     private(set) var current: WrappedResult?
+    /// Slides em andamento. Recriado a cada vez que os slides começam do primeiro.
+    private(set) var wrapped: WrappedViewModel?
 
     init(phraseGenerator: any SlidePhraseGenerator, store: any RetrospectiveStore) {
         importer = ImportViewModel(phraseGenerator: phraseGenerator)
@@ -71,10 +73,11 @@ final class AppViewModel {
     }
 
     /// "Ver minha retrospectiva" (07): guarda os números na lista e abre os slides.
+    /// Esta primeira vez usa o resultado completo; a versão salva não tem o trecho do textão.
     func showWrapped() {
         guard let result = importer.result else { return }
-        current = retrospectives.save(result).result
-        step = .wrapped
+        retrospectives.save(result)
+        play(result)
     }
 
     func showRetrospectives() {
@@ -90,8 +93,7 @@ final class AppViewModel {
 
     /// "Rever histórias" no menu.
     func replay(_ retrospective: SavedRetrospective) {
-        current = retrospective.result
-        step = .wrapped
+        play(retrospective.result)
     }
 
     /// Fim dos slides.
@@ -102,13 +104,13 @@ final class AppViewModel {
 
     /// "Ver de novo" no resumo.
     func replayCurrent() {
-        guard current != nil else { return }
-        step = .wrapped
+        guard let current else { return }
+        play(current)
     }
 
-    /// Começa uma nova retrospectiva, com outra conversa.
-    func startOver() {
-        importer.reset()
-        step = .importing
+    private func play(_ result: WrappedResult) {
+        current = result
+        wrapped = WrappedViewModel(result: result) { [weak self] in self?.showSummary() }
+        step = .wrapped
     }
 }

@@ -34,6 +34,16 @@ enum Backdrop: CaseIterable {
     var foreground: Color {
         isDark ? .cream : .ink
     }
+
+    /// Fundo do balão da frase da IA: creme em fundos claros e creme translúcido em fundos escuros.
+    /// No fundo creme, um creme um pouco mais escuro, para o balão não sumir.
+    var phraseBubble: Color {
+        switch self {
+        case .cream: .ink.opacity(0.06)
+        case _ where isDark: .cream.opacity(0.15)
+        default: .cream
+        }
+    }
 }
 
 extension EnvironmentValues {

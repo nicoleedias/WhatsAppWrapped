@@ -8,10 +8,16 @@
 import SwiftUI
 
 struct RotatingCaption: View {
-    let captions: [String]
     var interval: Duration = .seconds(2)
 
+    /// Embaralhadas uma vez, para cada carregamento começar e seguir numa ordem diferente.
+    @State private var captions: [String]
     @State private var index = 0
+
+    init(captions: [String], interval: Duration = .seconds(2)) {
+        _captions = State(initialValue: captions.shuffled())
+        self.interval = interval
+    }
 
     var body: some View {
         Text(captions[index])

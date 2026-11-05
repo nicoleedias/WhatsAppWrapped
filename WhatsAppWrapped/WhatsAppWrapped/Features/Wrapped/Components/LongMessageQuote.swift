@@ -10,7 +10,7 @@ import SwiftUI
 
 struct LongMessageQuote: View {
     let text: String
-    /// "1.284 caracteres · 14 de março, 2h13".
+    /// "1.284 caracteres · 14 de março, 02:13".
     let detail: String
 
     var body: some View {
@@ -30,7 +30,7 @@ struct LongMessageQuote: View {
         }
     }
 
-    /// "1.284 caracteres · 14 de março, 2h13", no fuso da conversa.
+    /// "1.284 caracteres · 14 de março, 02:13", no fuso da conversa.
     static func detail(length: Int, date: Date) -> String {
         let style = Date.FormatStyle(
             locale: Locale(identifier: "pt_BR"),
@@ -39,7 +39,7 @@ struct LongMessageQuote: View {
         )
         let day = date.formatted(style.day().month(.wide))
         let components = ChatCalendar.calendar.dateComponents([.hour, .minute], from: date)
-        let time = "\(components.hour ?? 0)h\(String(format: "%02d", components.minute ?? 0))"
+        let time = String(format: "%02d:%02d", components.hour ?? 0, components.minute ?? 0)
         return "\(length.formatted()) caracteres · \(day), \(time)"
     }
 }
@@ -47,7 +47,7 @@ struct LongMessageQuote: View {
 #Preview {
     LongMessageQuote(
         text: "Eu tava pensando aqui sobre ontem e acho que a gente precisa conversar sobre a forma como a gente escolhe o restaurante de sexta, porque toda vez é a mesma coisa e a gente acaba indo no mesmo lugar de sempre",
-        detail: "1.284 caracteres · 14 de março, 2h13"
+        detail: "1.284 caracteres · 14 de março, 02:13"
     )
     .padding(32)
     .background(.butter)
