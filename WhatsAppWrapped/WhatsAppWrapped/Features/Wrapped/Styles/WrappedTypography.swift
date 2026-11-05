@@ -9,7 +9,7 @@
 import SwiftUI
 
 extension TextStyle {
-    /// 29/32 · SemiBold. "Você possui", "Você riu", "Você mandou".
+    /// 29/32 · SemiBold. "Vocês trocaram", "Vocês riram".
     static let slideIntro = TextStyle(size: 29, weight: .semibold, lineHeight: 32, tracking: -0.29, relativeTo: .title)
     /// 35/39 · SemiBold. "Você é do time da madrugada".
     static let slideIntroLarge = TextStyle(size: 35, weight: .semibold, lineHeight: 39, tracking: -0.35, relativeTo: .largeTitle)

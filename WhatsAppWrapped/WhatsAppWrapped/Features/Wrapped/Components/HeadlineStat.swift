@@ -3,7 +3,7 @@
 //  WhatsAppWrapped
 //
 //  Abertura dos slides de número: frase curta + número gigante + legenda, entrando em sequência
-//  ("Você possui / 30.597 / mensagens trocadas com Nicole"). Usado em 08, 09, 15, 16, 17 e 17d.
+//  ("Vocês trocaram / 30.597 / mensagens"). Usado em 08, 09, 15, 16, 17 e 17d.
 //  Fica dentro do VStack da tela, que cuida do espaçamento de 24 entre as linhas.
 //
 
@@ -39,7 +39,7 @@ struct HeadlineStat: View {
 
 #Preview {
     VStack(alignment: .leading, spacing: 24) {
-        HeadlineStat(intro: "Você possui", value: "30.597", caption: "mensagens trocadas com Nicole")
+        HeadlineStat(intro: "Vocês trocaram", value: "30.597", caption: "mensagens")
     }
     .padding(32)
     .frame(maxWidth: .infinity, alignment: .leading)

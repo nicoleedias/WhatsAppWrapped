@@ -13,12 +13,12 @@ import SwiftUI
 
 @main
 struct WhatsAppWrappedApp: App {
-    @State private var viewModel: AppViewModel
+    @State private var coordinator: AppCoordinator
 
     init() {
         AppCheck.setAppCheckProviderFactory(WrappedAppCheckProviderFactory())
         FirebaseApp.configure()
-        _viewModel = State(initialValue: AppViewModel(
+        _coordinator = State(initialValue: AppCoordinator(
             phraseGenerator: GeminiPhraseGenerator(),
             store: FileRetrospectiveStore()
         ))
@@ -26,7 +26,7 @@ struct WhatsAppWrappedApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView(viewModel: viewModel)
+            ContentView(coordinator: coordinator)
         }
     }
 }

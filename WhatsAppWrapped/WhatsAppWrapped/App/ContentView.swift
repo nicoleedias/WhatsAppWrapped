@@ -11,56 +11,60 @@
 import SwiftUI
 
 struct ContentView: View {
-    let viewModel: AppViewModel
+    let coordinator: AppCoordinator
     @Environment(\.openURL) private var openURL
 
     var body: some View {
         ZStack {
-            switch viewModel.step {
+            switch coordinator.step {
             case .retrospectives:
                 RetrospectivesView(
-                    viewModel: viewModel.retrospectives,
-                    openSummary: viewModel.openSummary,
-                    replay: viewModel.replay,
-                    newRetrospective: viewModel.newRetrospective
+                    viewModel: coordinator.retrospectives,
+                    openSummary: coordinator.openSummary,
+                    replay: coordinator.replay,
+                    newRetrospective: coordinator.newRetrospective
                 )
             case .onboarding:
-                OnboardingView(start: viewModel.start, alreadyExported: viewModel.showFilePicker)
+                OnboardingView(start: coordinator.start)
             case .exportGuide:
                 ExportGuideView(
-                    openWhatsApp: { openURL(AppViewModel.whatsAppURL) },
-                    showFilePicker: viewModel.showFilePicker
+                    openWhatsApp: { openURL(AppCoordinator.whatsAppURL) },
+                    showFilePicker: coordinator.showFilePicker
                 )
             case .importing:
-                ImportFlowView(viewModel: viewModel.importer, showWrapped: viewModel.showWrapped)
+                ImportFlowView(viewModel: coordinator.importer, showWrapped: coordinator.showWrapped)
             case .wrapped:
-                if let result = viewModel.current {
-                    WrappedView(result: result, startOver: viewModel.startOver, showSummary: viewModel.showSummary)
+                if let wrapped = coordinator.wrapped {
+                    WrappedView(viewModel: wrapped)
                 }
             case .summary:
-                if let result = viewModel.current {
-                    SummaryView(viewModel: SummaryViewModel(result: result), replay: viewModel.replayCurrent)
+                if let result = coordinator.current {
+                    SummaryView(
+                        viewModel: SummaryViewModel(result: result),
+                        segmentCount: WrappedViewModel.makeSlides(for: result.stats).count + 1,
+                        replay: coordinator.replayCurrent
+                    )
                 }
             }
         }
         .transition(.opacity)
-        .animation(.easeInOut(duration: Motion.base), value: viewModel.step)
+        .animation(.easeInOut(duration: Motion.base), value: coordinator.step)
         .gesture(backSwipe)
         // Fundo escuro no onboarding: status bar clara.
-        .preferredColorScheme(viewModel.step == .onboarding ? .dark : .light)
+        .preferredColorScheme(coordinator.step == .onboarding ? .dark : .light)
         // Arquivo vindo do WhatsApp pelo compartilhamento ("Escolha Rebobina na lista").
-        .onOpenURL(perform: viewModel.importFile)
+        .onOpenURL(perform: coordinator.importFile)
     }
 
     /// As telas do Figma não têm botão de voltar; o gesto da borda esquerda faz esse papel.
     private var backSwipe: some Gesture {
         DragGesture(minimumDistance: 20)
             .onEnded { drag in
-                if drag.startLocation.x < 32 && drag.translation.width > 80 { viewModel.goBack() }
+                if drag.startLocation.x < 32 && drag.translation.width > 80 { coordinator.goBack() }
             }
     }
 }
 
 #Preview {
-    ContentView(viewModel: AppViewModel(phraseGenerator: PreviewPhraseGenerator(), store: PreviewRetrospectiveStore()))
+    ContentView(coordinator: AppCoordinator(phraseGenerator: PreviewPhraseGenerator(), store: PreviewRetrospectiveStore()))
 }

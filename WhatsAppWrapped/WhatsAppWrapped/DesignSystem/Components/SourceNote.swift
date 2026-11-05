@@ -8,7 +8,9 @@
 import SwiftUI
 
 struct SourceNote: View {
-    var text = "Feito com a conversa que você exportou do WhatsApp"
+    static let exportNote = "Feito com a conversa que você exportou do WhatsApp"
+
+    var text = SourceNote.exportNote
     @Environment(\.backdrop) private var backdrop
 
     var body: some View {

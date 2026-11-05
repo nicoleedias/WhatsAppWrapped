@@ -3,7 +3,7 @@
 //  WhatsAppWrapped
 //
 //  Telas 00a–00d: a lista de retrospectivas guardadas, o menu de ações de cada uma e a confirmação
-//  antes de apagar. Abrir o resumo, rever as histórias e começar uma nova ficam com o `AppViewModel`.
+//  antes de apagar. Abrir o resumo, rever as histórias e começar uma nova ficam com o `AppCoordinator`.
 //
 
 import Foundation
