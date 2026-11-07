@@ -131,10 +131,10 @@ struct SummaryStatGrid: View {
     }
 }
 
-/// Linha creme com o 🐢: "Quem demora mais / Nicole · 3h42min".
+/// Linha creme com o 🐢: "Quem demora mais pra responder / Nicole · 3h42min".
 struct SummaryHighlight: View {
     var emoji = "🐢"
-    var title = "Quem demora mais"
+    var title = "Quem demora mais pra responder"
     /// "Nicole · 3h42min".
     let value: String
 

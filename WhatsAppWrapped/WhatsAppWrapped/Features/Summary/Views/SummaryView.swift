@@ -3,7 +3,7 @@
 //  WhatsAppWrapped
 //
 //  Slide 21: o resumo final sobre ameixa, com o botão de compartilhar o card como imagem e o de ver os
-//  slides de novo. A imagem é gerada uma vez, sem as animações de entrada.
+//  slides de novo. A imagem é gerada uma vez, sem as animações de entrada. A nota de fonte só aparece nela.
 //
 
 import SwiftUI
@@ -31,7 +31,6 @@ struct SummaryView: View {
                     .buttonStyle(.rebobina(.secondary))
             }
         }
-        .sourceNote()
         .task { renderShareImage() }
     }
 

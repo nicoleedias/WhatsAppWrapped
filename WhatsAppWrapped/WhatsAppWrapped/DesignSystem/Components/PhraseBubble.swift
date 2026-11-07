@@ -3,7 +3,8 @@
 //  WhatsAppWrapped
 //
 //  Balão da frase gerada pela IA: emoji + frase curta (até 2 linhas). Claro em fundos claros,
-//  translúcido em fundos escuros. Entra 0,9 s depois do número, com pop.
+//  translúcido em fundos escuros e um tom mais escuro no fundo creme (`Backdrop.phraseBubble`).
+//  Entra 0,9 s depois do número, com pop.
 //
 
 import SwiftUI
@@ -23,14 +24,11 @@ struct PhraseBubble: View {
                 .lineLimit(2)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .foregroundStyle(backdrop.isDark ? Color.cream : .ink)
+        .foregroundStyle(backdrop.foreground)
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
         .frame(minHeight: 48)
-        .background(
-            backdrop.isDark ? Color.cream.opacity(0.15) : .cream,
-            in: BubbleShape(radius: 20, tail: .bottomLeading)
-        )
+        .background(backdrop.phraseBubble, in: BubbleShape(radius: 20, tail: .bottomLeading))
         .popEntrance()
     }
 }

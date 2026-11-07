@@ -3,7 +3,8 @@
 //  WhatsAppWrapped
 //
 //  Cabeçalho das histórias: barra de progresso em segmentos de 3 pt + rótulo + "Compartilhar".
-//  Sem `onShare`, o botão some (ex.: slides de "calculando" e quiz). As cores seguem o fundo da tela.
+//  Sem `onShare`, o botão some (ex.: slides de "calculando" e quiz). Sem `showsProgress`, a barra some
+//  (imagem de compartilhar). As cores seguem o fundo da tela.
 //
 
 import SwiftUI
@@ -13,11 +14,14 @@ struct StoryHeader: View {
     /// Índice da história atual (a partir de 0).
     let currentIndex: Int
     var segmentCount = 12
+    var showsProgress = true
     var onShare: (() -> Void)?
 
     var body: some View {
         VStack(spacing: 24) {
-            StoryProgressBar(currentIndex: currentIndex, segmentCount: segmentCount)
+            if showsProgress {
+                StoryProgressBar(currentIndex: currentIndex, segmentCount: segmentCount)
+            }
             HStack {
                 Text(label).textStyle(.label)
                 Spacer()

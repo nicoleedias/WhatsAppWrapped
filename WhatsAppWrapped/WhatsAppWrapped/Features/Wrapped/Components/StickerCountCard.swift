@@ -4,15 +4,21 @@
 //
 //  Slide 17e: o total de figurinhas num "adesivo" creme recortado, inclinado 4°, com sombra.
 //  Entra como uma figurinha sendo colada: de 1,5× e 18° para 0,96 e depois 1, já na inclinação final.
+//  A animação toca uma vez quando o card aparece (o `isStuck` muda no `onAppear`). Na imagem de
+//  compartilhar, em que o `onAppear` não roda, e com "Reduzir movimento", o card já começa colado.
 //
 
 import SwiftUI
 
 struct StickerCountCard: View {
     let count: Int
-    var caption = "figurinhas enviadas"
+    var caption = "figurinhas"
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.showsEntrances) private var showsEntrances
+    @State private var isStuck = false
+
+    private var startPose: Pose { reduceMotion || !showsEntrances ? .stuck : .start }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -27,14 +33,15 @@ struct StickerCountCard: View {
         .padding(.vertical, 36)
         .background(.cream, in: .rect(cornerRadius: 40))
         .shadow(color: .ink.opacity(0.22), radius: 10, y: 10)
-        .keyframeAnimator(initialValue: reduceMotion ? Pose.stuck : Pose.start, repeating: false) { content, pose in
+        // Depois da animação, o valor de repouso já é o adesivo colado.
+        .keyframeAnimator(initialValue: isStuck ? Pose.stuck : startPose, trigger: isStuck) { content, pose in
             content
                 .scaleEffect(pose.scale)
                 .rotationEffect(.degrees(pose.angle))
                 .opacity(pose.opacity)
         } keyframes: { _ in
             // Com "Reduzir movimento", todas as faixas já começam no adesivo colado.
-            let from = reduceMotion ? Pose.stuck : Pose.start
+            let from = startPose
             KeyframeTrack(\.opacity) {
                 LinearKeyframe(from.opacity, duration: 0.2)
                 CubicKeyframe(1, duration: 0.15)
@@ -50,6 +57,7 @@ struct StickerCountCard: View {
             }
         }
         .frame(maxWidth: .infinity)
+        .onAppear { isStuck = true }
         .accessibilityElement(children: .combine)
     }
 
