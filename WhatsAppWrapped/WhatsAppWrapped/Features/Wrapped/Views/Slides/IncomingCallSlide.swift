@@ -13,6 +13,8 @@ struct IncomingCallSlide: StorySlide {
 
     let call: WrappedSlide.IncomingCall
     @Environment(\.slideContext) private var context
+    /// Cada vibração do "trim-trim". Muda a cada 0,15 s nos toques e para no resto do ciclo.
+    @State private var buzzes = 0
 
     var body: some View {
         ScreenContainer(backdrop: .plum) {
@@ -23,6 +25,19 @@ struct IncomingCallSlide: StorySlide {
             IncomingCallActions(decline: context.advance, accept: context.advance)
         }
         .slideFooter()
+        .sensoryFeedback(.impact(weight: .heavy, intensity: 0.8), trigger: buzzes)
+        .task { await ring() }
+    }
+
+    /// Vibra como um celular tocando, no mesmo ciclo dos anéis, até a pessoa atender ou recusar.
+    private func ring() async {
+        let gap = 0.15
+        while !Task.isCancelled {
+            buzzes += 1
+            try? await Task.sleep(for: .seconds(gap))
+            buzzes += 1
+            try? await Task.sleep(for: .seconds(IncomingCallRings.loopDuration - gap))
+        }
     }
 }
 

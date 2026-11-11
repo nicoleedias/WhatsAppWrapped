@@ -30,7 +30,8 @@ nonisolated struct FileRetrospectiveStore: RetrospectiveStore {
     }
 
     func load() throws -> [SavedRetrospective] {
-        guard FileManager.default.fileExists(atPath: fileURL.path()) else { return [] }
+        // `path()` vem com codificação de URL ("Application%20Support") e o arquivo nunca seria achado.
+        guard FileManager.default.fileExists(atPath: fileURL.path(percentEncoded: false)) else { return [] }
         let data = try Data(contentsOf: fileURL)
         do {
             return try Self.decoder.decode([SavedRetrospective].self, from: data)

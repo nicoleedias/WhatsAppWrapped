@@ -45,8 +45,12 @@ private struct AnimatedLayer: View {
     let animation: ConcentricDecoration.Animation
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    /// false na imagem de compartilhar: os arcos já aparecem no lugar.
+    @Environment(\.showsEntrances) private var showsEntrances
     @State private var hasEntered = false
     @State private var isBreathing = false
+
+    private var isIn: Bool { hasEntered || !showsEntrances }
 
     /// Os arcos terminam de entrar em 0,95 s, 1,07 s, 1,19 s…
     private var entranceDuration: Double { 0.95 + Double(index) * 0.12 }
@@ -55,7 +59,7 @@ private struct AnimatedLayer: View {
         Image(image)
             .resizable()
             .scaleEffect(scale)
-            .offset(y: animation == .riseAndBreathe && !hasEntered ? 260 : 0)
+            .offset(y: animation == .riseAndBreathe && !isIn ? 260 : 0)
             .onAppear(perform: start)
     }
 
@@ -63,7 +67,7 @@ private struct AnimatedLayer: View {
         switch animation {
         case .none: 1
         case .riseAndBreathe: isBreathing ? 1.04 : 1
-        case .growCascade: hasEntered ? 1 : 0.2
+        case .growCascade: isIn ? 1 : 0.2
         }
     }
 

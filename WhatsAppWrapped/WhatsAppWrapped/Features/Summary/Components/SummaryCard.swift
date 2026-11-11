@@ -32,23 +32,19 @@ struct SummaryCard: View {
         return .init(emoji: highlight.emoji, value: highlight.value, caption: highlight.caption, tint: tint)
     }
 
-    /// Story 9:16 com o card, a decoração e a nota de fonte, no tamanho do frame do Figma.
-    /// As entradas ficam desligadas: o `ImageRenderer` não roda `onAppear` e tudo sairia invisível.
-    static func shareImage(for viewModel: SummaryViewModel, scale: CGFloat) -> Image? {
-        let poster = ScreenContainer(backdrop: .plum) {
-            BurstDecoration.summary
-        } content: {
-            Spacer(minLength: 0)
-            SummaryCard(viewModel: viewModel)
-            Spacer(minLength: 0)
+    /// Story 1080×1920 com o card, a decoração, a nota de fonte e a marca do app (ver `StoryPoster`).
+    static func shareImage(for viewModel: SummaryViewModel) -> Image? {
+        let image = StoryPoster.render {
+            ScreenContainer(backdrop: .plum) {
+                BurstDecoration.summary
+            } content: {
+                Spacer(minLength: 0)
+                SummaryCard(viewModel: viewModel)
+                Spacer(minLength: 0)
+            }
+            .overlay(alignment: .bottom) { StoryFooter(showsBrand: true) }
         }
-        .sourceNote()
-        .frame(width: FigmaScale.frame.width, height: FigmaScale.frame.height)
-        .environment(\.showsEntrances, false)
-
-        let renderer = ImageRenderer(content: poster)
-        renderer.scale = scale
-        return renderer.uiImage.map { Image(uiImage: $0) }
+        return image.map { Image(uiImage: $0) }
     }
 }
 

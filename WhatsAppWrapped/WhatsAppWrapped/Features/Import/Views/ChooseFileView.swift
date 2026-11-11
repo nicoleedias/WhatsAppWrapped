@@ -26,6 +26,7 @@ struct ChooseFileView: View {
                 isPickingFile = true
             }
             .shake(trigger: failureCount)
+            .sensoryFeedback(.error, trigger: failureCount)
             .entrance(delay: 0.2)
             Spacer(minLength: 0)
             Button("Analisar conversa", action: viewModel.analyzeSelectedFile)

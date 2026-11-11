@@ -80,9 +80,11 @@ final class AppCoordinator {
         play(result)
     }
 
+    /// "Minhas retrospectivas" no resumo e o gesto de voltar dos slides. Sempre abre a lista (00a), ou o
+    /// estado vazio (00b) se nada foi salvo; o onboarding só aparece ao abrir o app pela primeira vez.
     func showRetrospectives() {
         retrospectives.load()
-        step = retrospectives.isEmpty ? .onboarding : .retrospectives
+        step = .retrospectives
     }
 
     /// "Ver resumo" ou toque no cartão.
@@ -100,12 +102,6 @@ final class AppCoordinator {
     func showSummary() {
         guard current != nil else { return }
         step = .summary
-    }
-
-    /// "Ver de novo" no resumo.
-    func replayCurrent() {
-        guard let current else { return }
-        play(current)
     }
 
     private func play(_ result: WrappedResult) {
