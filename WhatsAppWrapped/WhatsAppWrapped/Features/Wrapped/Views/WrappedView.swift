@@ -2,8 +2,9 @@
 //  WrappedView.swift
 //  WhatsAppWrapped
 //
-//  Player dos slides 08–20, como histórias: toque no terço esquerdo volta, no resto avança. Botões dentro
-//  do slide (quiz, ligação, compartilhar) têm prioridade sobre o toque. Depois do último, vem o resumo.
+//  Player dos slides 08–20, como histórias: toque no terço esquerdo volta, no resto avança (menos no quiz,
+//  que só passa depois da resposta). Botões dentro do slide (quiz, ligação, compartilhar) têm prioridade
+//  sobre o toque. Depois do último, vem o resumo.
 //
 
 import SwiftUI
@@ -11,7 +12,6 @@ import SwiftUI
 struct WrappedView: View {
     let viewModel: WrappedViewModel
 
-    @Environment(\.displayScale) private var displayScale
     @State private var shareItem: ActivitySheet.Item?
 
     var body: some View {
@@ -26,12 +26,14 @@ struct WrappedView: View {
             }
             .contentShape(.rect)
             .onTapGesture { location in
-                if location.x < proxy.size.width / 3 { viewModel.goBack() } else { viewModel.advance() }
+                if location.x < proxy.size.width / 3 { viewModel.goBack() } else { viewModel.skipForward() }
             }
         }
         .ignoresSafeArea()
         .animation(Motion.screenTransition, value: viewModel.currentIndex)
-        .accessibilityAction(named: "Próxima história", viewModel.advance)
+        // Um "clique" leve a cada história, como virar uma página.
+        .sensoryFeedback(.selection, trigger: viewModel.currentIndex)
+        .accessibilityAction(named: "Próxima história", viewModel.skipForward)
         .accessibilityAction(named: "História anterior", viewModel.goBack)
         .sheet(item: $shareItem) { item in
             ActivitySheet(item: item)
@@ -54,15 +56,12 @@ struct WrappedView: View {
         )
     }
 
-    /// O slide atual como imagem 9:16, sem o botão, sem a barra de progresso e sem as animações de entrada.
+    /// O slide atual como story 1080×1920 (ver `StoryPoster`), sem o botão, sem a barra de progresso e sem as animações de entrada.
     private func share(_ slide: WrappedSlide) {
-        let poster = slide.view
-            .environment(\.slideContext, context(for: slide, isPoster: true))
-            .frame(width: FigmaScale.frame.width, height: FigmaScale.frame.height)
-            .environment(\.showsEntrances, false)
-        let renderer = ImageRenderer(content: poster)
-        renderer.scale = displayScale
-        shareItem = renderer.uiImage.map(ActivitySheet.Item.init)
+        let image = StoryPoster.render {
+            slide.view.environment(\.slideContext, context(for: slide, isPoster: true))
+        }
+        shareItem = image.map(ActivitySheet.Item.init)
     }
 }
 

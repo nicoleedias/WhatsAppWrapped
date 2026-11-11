@@ -14,7 +14,6 @@ struct RetrospectivesView: View {
     let replay: (SavedRetrospective) -> Void
     let newRetrospective: () -> Void
 
-    @Environment(\.displayScale) private var displayScale
     @State private var shareImage: Image?
 
     var body: some View {
@@ -122,7 +121,7 @@ struct RetrospectivesView: View {
 
     private func renderShareImage(for retrospective: SavedRetrospective) {
         shareImage = nil
-        shareImage = SummaryCard.shareImage(for: SummaryViewModel(result: retrospective.result), scale: displayScale)
+        shareImage = SummaryCard.shareImage(for: SummaryViewModel(result: retrospective.result))
     }
 }
 

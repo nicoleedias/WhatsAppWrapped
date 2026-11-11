@@ -11,6 +11,8 @@ import SwiftUI
 struct QuizSlide: StorySlide {
     static let label = "Mini game"
     static let isShareable = false
+    /// Só passa depois de acertar.
+    static let requiresAnswer = true
 
     let quiz: WrappedSlide.Quiz
     @Environment(\.slideContext) private var context

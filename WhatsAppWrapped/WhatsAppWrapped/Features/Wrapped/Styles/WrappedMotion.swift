@@ -3,7 +3,7 @@
 //  WhatsAppWrapped
 //
 //  Animações de entrada que só os slides usam: barras que crescem da esquerda (palavras, ligações, figurinhas)
-//  e blocos que sobem da base (pódio). Com "Reduzir movimento", aparecem já no lugar.
+//  e blocos que sobem da base (pódio). Com "Reduzir movimento" e na imagem de compartilhar, aparecem já no lugar.
 //
 
 import SwiftUI
@@ -26,10 +26,11 @@ private struct GrowAnimation: ViewModifier {
     let delay: Double
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.showsEntrances) private var showsEntrances
     @State private var hasGrown = false
 
     func body(content: Content) -> some View {
-        let scale = hasGrown || reduceMotion ? 1 : 0.05
+        let scale = hasGrown || reduceMotion || !showsEntrances ? 1 : 0.05
         content
             .scaleEffect(x: axis == .horizontal ? scale : 1, y: axis == .vertical ? scale : 1, anchor: anchor)
             .onAppear {

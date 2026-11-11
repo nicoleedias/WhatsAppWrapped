@@ -2,8 +2,9 @@
 //  SummaryView.swift
 //  WhatsAppWrapped
 //
-//  Slide 21: o resumo final sobre ameixa, com o botão de compartilhar o card como imagem e o de ver os
-//  slides de novo. A imagem é gerada uma vez, sem as animações de entrada. A nota de fonte só aparece nela.
+//  Slide 21: o resumo final sobre ameixa, com os botões de compartilhar o card como imagem e de voltar
+//  para "Minhas retrospectivas", como no Figma. A imagem é gerada uma vez, sem as animações de entrada.
+//  A nota de fonte só aparece nela.
 //
 
 import SwiftUI
@@ -11,9 +12,9 @@ import SwiftUI
 struct SummaryView: View {
     let viewModel: SummaryViewModel
     var segmentCount = 12
-    let replay: () -> Void
+    /// "Minhas retrospectivas": a lista com todas as retrospectivas salvas.
+    let showRetrospectives: () -> Void
 
-    @Environment(\.displayScale) private var displayScale
     @State private var shareImage: Image?
 
     var body: some View {
@@ -27,10 +28,15 @@ struct SummaryView: View {
             Spacer(minLength: 16)
             VStack(spacing: 8) {
                 shareButton
-                Button("Ver de novo", action: replay)
-                    .buttonStyle(.rebobina(.secondary))
+                // No Figma, o botão de contorno tem texto de 16 pt, um degrau abaixo do principal.
+                Button(action: showRetrospectives) {
+                    Text("Minhas retrospectivas")
+                        .textStyle(TextStyle(size: 16, weight: .semibold, relativeTo: .callout))
+                }
+                .buttonStyle(.rebobina(.secondary))
             }
         }
+        .hapticOnAppear(.success, delay: 0.3)
         .task { renderShareImage() }
     }
 
@@ -52,14 +58,14 @@ struct SummaryView: View {
     }
 
     private func renderShareImage() {
-        shareImage = SummaryCard.shareImage(for: viewModel, scale: displayScale)
+        shareImage = SummaryCard.shareImage(for: viewModel)
     }
 }
 
 #Preview("Duas pessoas") {
-    SummaryView(viewModel: SummaryViewModel(result: .preview), replay: {})
+    SummaryView(viewModel: SummaryViewModel(result: .preview), showRetrospectives: {})
 }
 
 #Preview("Grupo") {
-    SummaryView(viewModel: SummaryViewModel(result: .previewGroup), replay: {})
+    SummaryView(viewModel: SummaryViewModel(result: .previewGroup), showRetrospectives: {})
 }

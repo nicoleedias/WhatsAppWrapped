@@ -40,6 +40,12 @@ final class WrappedViewModel {
         slide.phraseSlide.flatMap { phrases[$0] }
     }
 
+    /// Toque ou VoiceOver em "próxima": não passa dos slides que pedem resposta (o quiz avança sozinho).
+    func skipForward() {
+        guard currentSlide?.requiresAnswer != true else { return }
+        advance()
+    }
+
     func advance() {
         if currentIndex + 1 < slides.count {
             currentIndex += 1

@@ -17,7 +17,11 @@ struct ResponseTimeSlide: StorySlide {
     /// 14a–14c antes de mostrar o tempo (14d).
     static let typingDuration: Duration = .seconds(2.4)
 
-    @State private var isRevealed = false
+    @State private var hasTyped = false
+    /// false na imagem de compartilhar: o tempo já aparece, sem o "digitando…".
+    @Environment(\.showsEntrances) private var showsEntrances
+
+    private var isRevealed: Bool { hasTyped || !showsEntrances }
 
     var body: some View {
         ScreenContainer(backdrop: .cream) {
@@ -39,9 +43,10 @@ struct ResponseTimeSlide: StorySlide {
             }
         }
         .slideFooter()
+        .sensoryFeedback(.impact(weight: .medium), trigger: hasTyped) { _, revealed in revealed }
         .task {
             try? await Task.sleep(for: Self.typingDuration)
-            withAnimation(Motion.pop) { isRevealed = true }
+            withAnimation(Motion.pop) { hasTyped = true }
         }
     }
 }

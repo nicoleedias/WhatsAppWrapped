@@ -14,6 +14,7 @@ struct WrappedSlide: Identifiable {
     let label: String
     let phraseSlide: PhraseSlide?
     let isShareable: Bool
+    let requiresAnswer: Bool
     let view: AnyView
 
     init<Slide: StorySlide>(_ slide: Slide) {
@@ -21,6 +22,7 @@ struct WrappedSlide: Identifiable {
         label = Slide.label
         phraseSlide = Slide.phraseSlide
         isShareable = Slide.isShareable
+        requiresAnswer = Slide.requiresAnswer
         view = AnyView(slide)
     }
 

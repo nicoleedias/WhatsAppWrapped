@@ -76,14 +76,19 @@ private struct DropIn: ViewModifier {
     let delay: Double
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    /// false na imagem de compartilhar: a polaroide já aparece no lugar.
+    @Environment(\.showsEntrances) private var showsEntrances
     @State private var hasLanded = false
 
     func body(content: Content) -> some View {
-        let isSettled = hasLanded || reduceMotion
+        let isShown = hasLanded || !showsEntrances
+        let isSettled = isShown || reduceMotion
         content
             .rotationEffect(.degrees(isSettled ? to : from))
             .offset(y: isSettled ? 0 : 260)
-            .opacity(hasLanded ? 1 : 0)
+            .opacity(isShown ? 1 : 0)
+            // Cada polaroide pousando.
+            .hapticOnAppear(.impact(flexibility: .soft, intensity: 0.7), delay: delay + 0.35)
             .onAppear {
                 withAnimation(Motion.pop.speed(0.8).delay(delay)) { hasLanded = true }
             }

@@ -156,10 +156,15 @@ private struct SlideText {
         return WrappedSlide.Audios(headline: headline, comparison: (entry(ranked[0]), entry(ranked[1])))
     }
 
+    /// Quem aparece "chamando": nunca quem exportou. A dois, a outra pessoa; no grupo, o nome do grupo
+    /// (ou, sem ele, quem mais ligou).
     var incomingCall: WrappedSlide.IncomingCall? {
         guard stats.calls.total > 0 else { return nil }
-        let caller = stats.calls.byCaller.max { $0.count < $1.count }?.name ?? otherPerson ?? "Alguém"
-        return WrappedSlide.IncomingCall(name: displayName(caller), isGroup: stats.isGroup)
+        let topOtherCaller = stats.calls.byCaller
+            .filter { $0.name != stats.exporter }
+            .max { $0.count < $1.count }?.name
+        let caller = stats.isGroup ? stats.title ?? topOtherCaller : otherPerson ?? topOtherCaller
+        return WrappedSlide.IncomingCall(name: caller ?? "Alguém", isGroup: stats.isGroup)
     }
 
     var calls: WrappedSlide.Calls? {

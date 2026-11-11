@@ -31,6 +31,7 @@ struct EmojiMysterySlide: StorySlide {
             Spacer(minLength: 0)
         }
         .slideFooter()
+        .sensoryFeedback(.impact(flexibility: .soft, intensity: 0.6), trigger: stage)
         .task {
             try? await Task.sleep(for: Self.stageDuration)
             withAnimation(.easeInOut(duration: Motion.base)) { stage = .almostThere }

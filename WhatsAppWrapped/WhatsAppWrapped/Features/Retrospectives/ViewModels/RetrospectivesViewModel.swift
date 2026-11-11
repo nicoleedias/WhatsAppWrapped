@@ -8,6 +8,7 @@
 
 import Foundation
 import Observation
+import os
 
 @Observable
 final class RetrospectivesViewModel {
@@ -32,6 +33,7 @@ final class RetrospectivesViewModel {
     var deletionTarget: SavedRetrospective?
 
     private let store: any RetrospectiveStore
+    private static let logger = Logger(subsystem: "WhatsAppWrapped", category: "Retrospectives")
 
     init(store: any RetrospectiveStore) {
         self.store = store
@@ -54,7 +56,11 @@ final class RetrospectivesViewModel {
     @discardableResult
     func save(_ result: WrappedResult) -> SavedRetrospective {
         let saved = SavedRetrospective(result: result)
-        try? store.save(saved)
+        do {
+            try store.save(saved)
+        } catch {
+            Self.logger.error("Não foi possível salvar a retrospectiva: \(error)")
+        }
         load()
         return saved
     }

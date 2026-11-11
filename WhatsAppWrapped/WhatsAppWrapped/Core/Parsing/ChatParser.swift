@@ -153,7 +153,7 @@ nonisolated enum ChatParser {
         // Mídias, chamadas e avisos do iPhone também começam com U+200E.
         let isMarked = rawText.first == ChatMarkers.leftToRightMark
 
-        if let media = ChatMarkers.media[lowerNoPeriod] {
+        if let media = ChatMarkers.mediaType(forPlaceholder: lowerNoPeriod) ?? ChatMarkers.mediaType(forAttachment: lower) {
             return .message(author: author, text: text, kind: .media(media))
         }
         if ChatMarkers.documentSuffixes.contains(where: { lower.hasSuffix($0) }) {
