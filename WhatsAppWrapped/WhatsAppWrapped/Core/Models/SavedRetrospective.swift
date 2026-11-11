@@ -45,7 +45,8 @@ private extension WrappedStats {
             media: media,
             longMessages: LongMessageStats(
                 averageLengthByPerson: longMessages.averageLengthByPerson,
-                longest: longMessages.longest.map { .init(name: $0.name, length: $0.length, date: $0.date, text: "") }
+                longest: longMessages.longest.map { .init(name: $0.name, length: $0.length, date: $0.date, text: "") },
+                totalCharactersByPerson: longMessages.totalCharactersByPerson
             ),
             calls: calls
         )

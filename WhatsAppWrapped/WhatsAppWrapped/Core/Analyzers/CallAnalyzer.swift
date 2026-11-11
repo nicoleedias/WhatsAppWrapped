@@ -24,6 +24,7 @@ nonisolated enum CallAnalyzer {
             missed: calls.count(where: \.isMissed),
             averageDuration: durations.isEmpty ? nil : durations.reduce(0, +) / Double(durations.count),
             longestDuration: durations.max(),
+            totalDuration: durations.isEmpty ? nil : durations.reduce(0, +),
             byCaller: PersonCount.ranking(byCaller)
         )
     }

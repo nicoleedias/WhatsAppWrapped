@@ -17,6 +17,8 @@ nonisolated struct CallStats: Codable, Sendable {
     /// Média das chamadas atendidas. nil se nenhuma tiver duração.
     let averageDuration: TimeInterval?
     let longestDuration: TimeInterval?
+    /// Soma das chamadas atendidas. nil em retrospectivas antigas ou sem nenhuma duração.
+    var totalDuration: TimeInterval? = nil
     /// Quem mais liga.
     let byCaller: [PersonCount]
 
