@@ -25,7 +25,11 @@ nonisolated enum WrappedService {
         let period = period.map { ChatCalendar.startOfDay($0.lowerBound)...ChatCalendar.startOfDay($0.upperBound) }
             ?? defaultPeriod(for: chat)
         let endOfPeriod = ChatCalendar.adding(days: 1, to: period.upperBound)
-        let messages = chat.messages.filter { $0.date >= period.lowerBound && $0.date < endOfPeriod }
+        // Segunda proteção contra o nome do grupo virar participante (ver `ChatParser.parse`).
+        let groupName = chat.isGroup ? chat.title : nil
+        let messages = chat.messages.filter {
+            $0.date >= period.lowerBound && $0.date < endOfPeriod && $0.author != groupName
+        }
         let calls = chat.calls.filter { $0.date >= period.lowerBound && $0.date < endOfPeriod }
 
         let messageStats = MessageCountAnalyzer.analyze(
@@ -68,7 +72,7 @@ nonisolated enum WrappedService {
         guard chat.isGroup else { return Array(result) }
 
         let changesByName = Dictionary(grouping: chat.membershipChanges, by: \.name)
-        for name in Set(chat.authors).union(changesByName.keys) where !result.contains(name) {
+        for name in Set(chat.authors).union(changesByName.keys) where !result.contains(name) && name != chat.title {
             let changes = changesByName[name] ?? []
             let leftBefore = changes.last { $0.date < period.lowerBound }?.joined == false
             let joinedAfter = changes.first.map { $0.joined && $0.date > period.upperBound } ?? false

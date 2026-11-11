@@ -34,17 +34,35 @@ nonisolated enum ChatParser {
         var messages: [Message] = []
         var systemEvents: [SystemEvent] = []
         var calls: [Call] = []
+        var systemAuthors = Set<String>()
+        var typingAuthors = Set<String>()
 
         for entry in entries {
             guard let date = entry.header.date(dayFirst: dayFirst) else { continue }
             switch classify(entry.body) {
-            case .message(let author, let text, let kind):
+            case .message(let author, let text, let kind, let isMarked):
                 messages.append(Message(date: date, author: author, text: text, kind: kind))
+                if kind == .text && !isMarked { typingAuthors.insert(author) }
             case .call(let caller, let isVideo, let duration, let isMissed):
                 calls.append(Call(date: date, caller: caller, isVideo: isVideo, duration: duration, isMissed: isMissed))
-            case .system(let text):
+            case .system(let text, let author):
                 systemEvents.append(SystemEvent(date: date, text: text))
+                if let author { systemAuthors.insert(author) }
             }
+        }
+
+        // No iPhone, os avisos de grupo saem com o nome do grupo como autor ("Rolê: ‎Ana agora é admin").
+        // Avisos que não estão em `systemFragments` viriam como mensagens do grupo, que apareceria
+        // como participante (e fantasma). O nome do grupo é quem assina avisos e nunca digitou texto.
+        // Numa conversa a dois os avisos saem com o nome do contato: se sobrar menos de duas pessoas, não mexe.
+        let groupNames = systemAuthors.subtracting(typingAuthors)
+        let realAuthors = Set(messages.map(\.author)).subtracting(groupNames)
+        if !groupNames.isEmpty, realAuthors.count >= 2 {
+            for message in messages where groupNames.contains(message.author) {
+                systemEvents.append(SystemEvent(date: message.date, text: message.text))
+            }
+            messages.removeAll { groupNames.contains($0.author) }
+            systemEvents.sort { $0.date < $1.date }
         }
         guard !messages.isEmpty else { throw ParseError.noMessages }
 
@@ -135,16 +153,18 @@ nonisolated enum ChatParser {
     // MARK: - Tipo de cada linha
 
     private enum Entry {
-        case message(author: String, text: String, kind: Message.Kind)
+        /// `isMarked`: o texto começa com U+200E, como mídias e avisos do iPhone (texto digitado não começa).
+        case message(author: String, text: String, kind: Message.Kind, isMarked: Bool)
         case call(caller: String, isVideo: Bool, duration: TimeInterval?, isMissed: Bool)
-        case system(String)
+        /// `author`: quem aparece antes dos dois-pontos, quando o aviso tem um.
+        case system(String, author: String?)
     }
 
     private static func classify(_ body: String) -> Entry {
         // O iPhone grava avisos sem autor começando com o caractere invisível U+200E.
         guard body.first != ChatMarkers.leftToRightMark,
               let (author, rawText) = splitAuthor(body) else {
-            return .system(clean(body))
+            return .system(clean(body), author: nil)
         }
 
         let text = clean(rawText)
@@ -154,16 +174,16 @@ nonisolated enum ChatParser {
         let isMarked = rawText.first == ChatMarkers.leftToRightMark
 
         if let media = ChatMarkers.mediaType(forPlaceholder: lowerNoPeriod) ?? ChatMarkers.mediaType(forAttachment: lower) {
-            return .message(author: author, text: text, kind: .media(media))
+            return .message(author: author, text: text, kind: .media(media), isMarked: isMarked)
         }
         if ChatMarkers.documentSuffixes.contains(where: { lower.hasSuffix($0) }) {
-            return .message(author: author, text: text, kind: .media(.document))
+            return .message(author: author, text: text, kind: .media(.document), isMarked: isMarked)
         }
         if ChatMarkers.locationPrefixes.contains(where: { lower.hasPrefix($0) }) {
-            return .message(author: author, text: text, kind: .media(.location))
+            return .message(author: author, text: text, kind: .media(.location), isMarked: isMarked)
         }
         if ChatMarkers.deleted.contains(lowerNoPeriod) {
-            return .message(author: author, text: text, kind: .deleted)
+            return .message(author: author, text: text, kind: .deleted, isMarked: isMarked)
         }
         if isMarked, ChatMarkers.callPrefixes.contains(where: { lower.hasPrefix($0) }) {
             return .call(
@@ -174,9 +194,9 @@ nonisolated enum ChatParser {
             )
         }
         if isMarked, ChatMarkers.systemFragments.contains(where: { lower.contains($0) }) {
-            return .system(text)
+            return .system(text, author: author)
         }
-        return .message(author: author, text: text, kind: .text)
+        return .message(author: author, text: text, kind: .text, isMarked: isMarked)
     }
 
     private static let callDurationRegex = try! NSRegularExpression(pattern: ChatMarkers.callDurationPattern)
