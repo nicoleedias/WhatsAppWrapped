@@ -58,6 +58,8 @@ struct StickerCountCard: View {
         }
         .frame(maxWidth: .infinity)
         .onAppear { isStuck = true }
+        // O "tum" da figurinha batendo no slide, quando ela chega a 0,96.
+        .hapticOnAppear(.impact(weight: .medium), delay: 0.45)
         .accessibilityElement(children: .combine)
     }
 

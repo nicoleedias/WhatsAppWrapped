@@ -42,7 +42,7 @@ struct ContentView: View {
                     SummaryView(
                         viewModel: SummaryViewModel(result: result),
                         segmentCount: WrappedViewModel.makeSlides(for: result.stats).count + 1,
-                        replay: coordinator.replayCurrent
+                        showRetrospectives: coordinator.showRetrospectives
                     )
                 }
             }

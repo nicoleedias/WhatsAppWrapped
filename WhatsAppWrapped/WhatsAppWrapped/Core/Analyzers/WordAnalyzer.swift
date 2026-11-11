@@ -50,6 +50,7 @@ nonisolated enum WordAnalyzer {
         word.count >= 3
             && Set(word).count > 1 // "aaaa", "sss"
             && !ChatMarkers.stopwords.contains(word)
+            && !ChatMarkers.mediaHiddenWords.contains(word) // "imagem oculta" que escapou do parser
             && !names.contains(word)
             && !LaughAnalyzer.isLaugh(word)
     }

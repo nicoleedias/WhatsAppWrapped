@@ -4,6 +4,7 @@
 //
 //  Base de todas as telas: fundo chapado de ponta a ponta, decoração atrás, conteúdo com as margens do grid
 //  (laterais 32, topo 64, base 48) e um rodapé opcional fixo na base, como nos frames de 393×852 do Figma.
+//  Na imagem do story (`isStoryPoster`), as margens são as do quadro 9:16 do `StoryPoster`.
 //
 
 import SwiftUI
@@ -15,13 +16,15 @@ struct ScreenContainer<Content: View, Decoration: View, Footer: View>: View {
     @ViewBuilder let content: Content
     @ViewBuilder let footer: Footer
 
+    @Environment(\.isStoryPoster) private var isStoryPoster
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 24) {
+        VStack(alignment: .leading, spacing: isStoryPoster ? StoryPoster.blockSpacing : 24) {
             content
         }
-        .padding(.horizontal, 32)
-        .padding(.top, 64)
-        .padding(.bottom, bottomPadding)
+        .padding(.horizontal, isStoryPoster ? StoryPoster.horizontalPadding : 32)
+        .padding(.top, isStoryPoster ? StoryPoster.topPadding : 64)
+        .padding(.bottom, isStoryPoster ? StoryPoster.bottomPadding : bottomPadding)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .background {
             ZStack {

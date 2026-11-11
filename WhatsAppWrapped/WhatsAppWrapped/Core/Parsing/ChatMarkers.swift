@@ -24,18 +24,51 @@ nonisolated enum ChatMarkers {
         "esta mensagem foi apagada", "você apagou esta mensagem", "mensagem apagada",
     ]
 
-    static let media: [String: MediaType] = [
-        "audio omitted": .audio, "áudio ocultado": .audio, "áudio omitido": .audio,
-        "image omitted": .image, "imagem ocultada": .image, "imagem omitida": .image,
-        "video omitted": .video, "vídeo omitido": .video, "vídeo ocultado": .video,
-        "sticker omitted": .sticker, "figurinha omitida": .sticker, "figurinha ocultada": .sticker,
-        "gif omitted": .gif, "gif omitido": .gif, "gif ocultado": .gif,
-        "contact card omitted": .contact, "cartão de contato omitido": .contact,
-        "<media omitted>": .unknown, "<mídia oculta>": .unknown, "<arquivo de mídia oculto>": .unknown,
+    /// Mídia sem o arquivo: "imagem oculta", "imagem ocultada", "áudio omitido", "<Mídia oculta>"…
+    /// O texto muda com a versão do WhatsApp, então vale qualquer combinação de tipo + palavra de oculto.
+    static func mediaType(forPlaceholder text: String) -> MediaType? {
+        let trimmed = text.trimmingCharacters(in: CharacterSet(charactersIn: "<>").union(.whitespaces))
+        guard let last = trimmed.split(separator: " ").last, mediaHiddenWords.contains(String(last)) else { return nil }
+        let noun = trimmed.dropLast(last.count).trimmingCharacters(in: .whitespaces)
+        return mediaNouns[noun]
+    }
+
+    /// Mídia exportada junto com a conversa: "<anexado: 00000012-PHOTO-2026-03-14-21-03-12.jpg>".
+    static func mediaType(forAttachment text: String) -> MediaType? {
+        guard text.hasPrefix("<"), text.hasSuffix(">"),
+              let colon = text.firstIndex(of: ":"),
+              attachmentPrefixes.contains(String(text[text.index(after: text.startIndex)..<colon])) else { return nil }
+        let file = text[text.index(after: colon)...].dropLast().trimmingCharacters(in: .whitespaces).lowercased()
+        if file.contains("-photo-") { return .image }
+        if file.contains("-audio-") || file.hasSuffix(".opus") { return .audio }
+        if file.contains("-video-") { return .video }
+        if file.contains("-sticker-") || file.hasSuffix(".webp") { return .sticker }
+        if file.contains("-gif-") { return .gif }
+        if file.hasSuffix(".vcf") { return .contact }
+        return .document
+    }
+
+    /// Última palavra dos textos de mídia oculta. Também ficam fora das palavras mais usadas.
+    static let mediaHiddenWords: Set<String> = [
+        "omitted", "omitida", "omitido", "oculta", "ocultada", "oculto", "ocultado",
     ]
 
+    private static let mediaNouns: [String: MediaType] = [
+        "audio": .audio, "áudio": .audio,
+        "image": .image, "imagem": .image, "photo": .image, "foto": .image,
+        "video": .video, "vídeo": .video,
+        "sticker": .sticker, "figurinha": .sticker,
+        "gif": .gif,
+        "contact card": .contact, "cartão de contato": .contact, "contato": .contact,
+        "media": .unknown, "mídia": .unknown, "arquivo de mídia": .unknown,
+    ]
+
+    private static let attachmentPrefixes: Set<String> = ["attached", "anexado", "anexo"]
+
     /// Documentos vêm como "relatorio.pdf • 3 páginas ‎documento omitido".
-    static let documentSuffixes = ["document omitted", "documento omitido", "documento ocultado"]
+    static let documentSuffixes = [
+        "document omitted", "documento omitido", "documento ocultado", "documento oculto",
+    ]
     static let locationPrefixes = ["location: ", "localização: ", "localização em tempo real"]
 
     static let callPrefixes = [

@@ -15,11 +15,14 @@ protocol StorySlide: View {
     static var phraseSlide: PhraseSlide? { get }
     /// Os de suspense e os interativos não dá para compartilhar como imagem.
     static var isShareable: Bool { get }
+    /// true quando o toque não avança: o próprio slide chama `advance` (ex.: o quiz, depois do acerto).
+    static var requiresAnswer: Bool { get }
 }
 
 extension StorySlide {
     static var phraseSlide: PhraseSlide? { nil }
     static var isShareable: Bool { true }
+    static var requiresAnswer: Bool { false }
 
     /// Coloca o slide num contexto de exemplo, para o #Preview.
     func slidePreview(phrase: SlidePhrase? = nil) -> some View {

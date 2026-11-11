@@ -13,6 +13,7 @@ struct PhraseBubble: View {
     let emoji: String
     let text: String
     @Environment(\.backdrop) private var backdrop
+    @Environment(\.isStoryPoster) private var isStoryPoster
 
     var body: some View {
         HStack(spacing: 12) {
@@ -22,6 +23,8 @@ struct PhraseBubble: View {
             Text(text)
                 .textStyle(.bodyS)
                 .lineLimit(2)
+                // No story, a frase nunca é cortada: o slide mais cheio (fotos) usa a sobra da margem de baixo.
+                .fixedSize(horizontal: false, vertical: isStoryPoster)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
         .foregroundStyle(backdrop.foreground)

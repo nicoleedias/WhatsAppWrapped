@@ -30,6 +30,8 @@ struct HeadlineStat: View {
             .textStyle(valueStyle, minimumScale: 0.5)
             .foregroundStyle(valueColor ?? backdrop.foreground)
             .entrance(delay: 0.15, offset: 32, duration: Motion.slow)
+            // Quando o número termina de subir.
+            .hapticOnAppear(.impact(weight: .light), delay: 0.45)
             .accessibilityAddTraits(.isHeader)
         Text(caption)
             .textStyle(captionStyle)

@@ -18,6 +18,8 @@ struct ChampionEmoji: View {
             .font(.system(size: 160))
             .frame(maxWidth: .infinity, minHeight: 260)
             .popEntrance(delay: 0.3, from: 0.4)
+            // O pop da revelação.
+            .hapticOnAppear(.impact(weight: .heavy), delay: 0.45)
             .accessibilityLabel("Emoji mais usado: \(emoji), \(count) vezes")
     }
 }
