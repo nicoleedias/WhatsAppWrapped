@@ -29,10 +29,11 @@ struct ContentView: View {
             case .exportGuide:
                 ExportGuideView(
                     openWhatsApp: { openURL(AppCoordinator.whatsAppURL) },
-                    showFilePicker: coordinator.showFilePicker
+                    showFilePicker: coordinator.showFilePicker,
+                    goBack: coordinator.goBack
                 )
             case .importing:
-                ImportFlowView(viewModel: coordinator.importer, showWrapped: coordinator.showWrapped)
+                ImportFlowView(viewModel: coordinator.importer, showWrapped: coordinator.showWrapped, goBack: coordinator.goBack)
             case .wrapped:
                 if let wrapped = coordinator.wrapped {
                     WrappedView(viewModel: wrapped)

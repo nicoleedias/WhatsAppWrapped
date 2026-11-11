@@ -10,12 +10,13 @@ import SwiftUI
 struct ImportFlowView: View {
     let viewModel: ImportViewModel
     let showWrapped: () -> Void
+    let goBack: () -> Void
 
     var body: some View {
         ZStack {
             switch viewModel.phase {
             case .chooseFile:
-                ChooseFileView(viewModel: viewModel)
+                ChooseFileView(viewModel: viewModel, goBack: goBack)
             case .loading:
                 LoadingView()
             case .ready:

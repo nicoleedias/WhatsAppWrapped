@@ -32,6 +32,8 @@ nonisolated struct PhraseSummary: Encodable {
     let photos: Media?
     let stickers: Media?
     let averageMessageLengthByPerson: [PersonCount]
+    let totalCharactersByPerson: [PersonCount]?
+    let totalCharacters: Int?
     let longestMessageCharacters: Int?
     let calls: Calls?
     let derived: Derived
@@ -48,6 +50,7 @@ nonisolated struct PhraseSummary: Encodable {
         let total, voice, video, answered, missed: Int
         let averageMinutes: Double?
         let longestMinutes: Int?
+        let totalMinutes: Int?
         let byCaller: [PersonCount]
     }
 
@@ -95,6 +98,8 @@ nonisolated struct PhraseSummary: Encodable {
         photos = media(stats.media.photos)
         stickers = media(stats.media.stickers)
         averageMessageLengthByPerson = stats.longMessages.averageLengthByPerson
+        totalCharactersByPerson = stats.longMessages.totalCharactersByPerson
+        totalCharacters = stats.longMessages.totalCharactersByPerson.map { $0.reduce(0) { $0 + $1.count } }
         longestMessageCharacters = stats.longMessages.longest?.length
         calls = stats.calls.total == 0 ? nil : Calls(
             total: stats.calls.total,
@@ -104,6 +109,7 @@ nonisolated struct PhraseSummary: Encodable {
             missed: stats.calls.missed,
             averageMinutes: stats.calls.averageDuration.map { ($0 / 6).rounded() / 10 },
             longestMinutes: stats.calls.longestDuration.map { Int($0 / 60) },
+            totalMinutes: stats.calls.totalDuration.map { Int($0 / 60) },
             byCaller: stats.calls.byCaller
         )
         derived = Derived(
