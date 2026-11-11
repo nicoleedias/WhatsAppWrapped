@@ -23,7 +23,8 @@ nonisolated enum LongMessageAnalyzer {
         let averages = totals.mapValues { Int((Double($0.characters) / Double($0.messages)).rounded()) }
         return LongMessageStats(
             averageLengthByPerson: PersonCount.ranking(averages),
-            longest: longest.map { .init(name: $0.author, length: $0.text.count, date: $0.date, text: $0.text) }
+            longest: longest.map { .init(name: $0.author, length: $0.text.count, date: $0.date, text: $0.text) },
+            totalCharactersByPerson: PersonCount.ranking(totals.mapValues(\.characters))
         )
     }
 }

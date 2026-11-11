@@ -19,6 +19,7 @@ nonisolated enum LaughAnalyzer {
         var byPerson: [String: Int] = [:]
         var byType: [String: Int] = [:]
         var total = 0
+        var characters = 0
 
         for message in messages where message.isText {
             let laughs = matches(in: message.text)
@@ -28,13 +29,19 @@ nonisolated enum LaughAnalyzer {
             byPerson[message.author, default: 0] += 1
             for laugh in laughs {
                 byType[normalize(laugh), default: 0] += 1
+                characters += laugh.count
             }
         }
 
         let types = byType
             .map { LaughStats.TypeCount(laugh: $0.key, count: $0.value) }
             .sorted { ($0.count, $1.laugh) > ($1.count, $0.laugh) }
-        return LaughStats(total: total, byPerson: PersonCount.ranking(byPerson), byType: Array(types.prefix(10)))
+        return LaughStats(
+            total: total,
+            byPerson: PersonCount.ranking(byPerson),
+            byType: Array(types.prefix(10)),
+            characters: characters
+        )
     }
 
     /// Se a palavra inteira é uma risada. Usado para tirar risadas das palavras favoritas.
