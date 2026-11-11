@@ -11,6 +11,7 @@ import UniformTypeIdentifiers
 
 struct ChooseFileView: View {
     let viewModel: ImportViewModel
+    let goBack: () -> Void
     @State private var isPickingFile = false
     @State private var failureCount = 0
 
@@ -18,7 +19,7 @@ struct ChooseFileView: View {
         ScreenContainer(backdrop: .lilac) {
             WavesDecoration.chooseFile
         } content: {
-            TitleBlock(label: "Outra forma", title: "Escolha “Salvar em arquivos”")
+            TitleBlock(label: "Outra forma", title: "Escolha “Salvar em arquivos”", back: goBack)
             FileDropzone(
                 fileName: viewModel.selectedFile?.lastPathComponent,
                 hasError: viewModel.failure != nil
@@ -52,5 +53,5 @@ struct ChooseFileView: View {
 }
 
 #Preview {
-    ChooseFileView(viewModel: ImportViewModel(phraseGenerator: PreviewPhraseGenerator()))
+    ChooseFileView(viewModel: ImportViewModel(phraseGenerator: PreviewPhraseGenerator()), goBack: {})
 }

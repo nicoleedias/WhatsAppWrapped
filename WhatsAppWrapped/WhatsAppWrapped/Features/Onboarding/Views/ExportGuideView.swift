@@ -11,12 +11,13 @@ import SwiftUI
 struct ExportGuideView: View {
     let openWhatsApp: () -> Void
     let showFilePicker: () -> Void
+    let goBack: () -> Void
 
     var body: some View {
         ScreenContainer(backdrop: .cream) {
             BurstDecoration.exportGuide
         } content: {
-            TitleBlock(label: "Como exportar", title: "Como exportar sua conversa")
+            TitleBlock(label: "Como exportar", title: "Como exportar sua conversa", back: goBack)
             ExportStepList(steps: ExportStep.all)
             Spacer(minLength: 0)
             VStack(spacing: 16) {
@@ -30,5 +31,5 @@ struct ExportGuideView: View {
 }
 
 #Preview {
-    ExportGuideView(openWhatsApp: {}, showFilePicker: {})
+    ExportGuideView(openWhatsApp: {}, showFilePicker: {}, goBack: {})
 }
