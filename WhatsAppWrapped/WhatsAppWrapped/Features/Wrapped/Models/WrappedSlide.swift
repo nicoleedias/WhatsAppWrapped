@@ -112,6 +112,8 @@ extension WrappedSlide {
     }
 
     struct LongMessage {
+        /// "O maior textão do ano foi..." ou "do mês", na retrospectiva de 30 dias.
+        let title: String
         /// O começo do textão. nil nas retrospectivas salvas, que não guardam texto de mensagem.
         let text: String?
         /// "Nicole · 1.284 caracteres · 14 de março, 02:13".

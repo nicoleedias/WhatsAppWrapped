@@ -237,6 +237,7 @@ private struct SlideText {
         guard let longest = stats.longMessages.longest else { return nil }
         let detail = LongMessageQuote.detail(length: longest.length, date: longest.date)
         return WrappedSlide.LongMessage(
+            title: "O maior textão do \(stats.periodNoun) foi...",
             text: longest.text.isEmpty ? nil : longest.text,
             detail: "\(displayName(longest.name)) · \(detail)"
         )

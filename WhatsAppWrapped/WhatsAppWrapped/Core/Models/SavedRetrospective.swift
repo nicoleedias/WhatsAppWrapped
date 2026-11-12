@@ -13,16 +13,19 @@ nonisolated struct SavedRetrospective: Codable, Identifiable, Sendable {
     let createdAt: Date
     let stats: WrappedStats
     let phrases: SlidePhrases
+    /// Opcional porque os arquivos salvos antes do modelo pago não têm o campo.
+    let isTrial: Bool?
 
     init(result: WrappedResult, id: UUID = UUID(), createdAt: Date = .now) {
         self.id = id
         self.createdAt = createdAt
         stats = result.stats.removingMessageText()
         phrases = result.phrases
+        isTrial = result.isTrial
     }
 
     var result: WrappedResult {
-        WrappedResult(stats: stats, phrases: phrases)
+        WrappedResult(stats: stats, phrases: phrases, isTrial: isTrial ?? false)
     }
 }
 

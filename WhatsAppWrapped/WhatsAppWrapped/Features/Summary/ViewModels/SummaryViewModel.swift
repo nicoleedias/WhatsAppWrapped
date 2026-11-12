@@ -22,9 +22,11 @@ final class SummaryViewModel {
     }
 
     private let stats: WrappedStats
+    private let isTrial: Bool
 
     init(result: WrappedResult) {
         stats = result.stats
+        isTrial = result.isTrial
     }
 
     var isGroup: Bool { stats.isGroup }
@@ -41,9 +43,11 @@ final class SummaryViewModel {
         return stats.title ?? "Seu grupo"
     }
 
-    /// "💬 sua conversa em 2026" ou "💬 6 pessoas · 2026".
+    /// "💬 sua conversa em 2026" ou "💬 6 pessoas · 2026". Na grátis, "últimos 30 dias" no lugar do ano.
     var subtitle: String {
-        isGroup ? "💬 \(stats.participants.count) pessoas · \(year)" : "💬 sua conversa em \(year)"
+        let when = isTrial ? "últimos 30 dias" : year
+        if isGroup { return "💬 \(stats.participants.count) pessoas · \(when)" }
+        return isTrial ? "💬 seus últimos 30 dias" : "💬 sua conversa em \(year)"
     }
 
     var messageCount: Int { stats.messages.total }
