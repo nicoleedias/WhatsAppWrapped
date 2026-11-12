@@ -53,5 +53,5 @@ struct ChooseFileView: View {
 }
 
 #Preview {
-    ChooseFileView(viewModel: ImportViewModel(phraseGenerator: PreviewPhraseGenerator()), goBack: {})
+    ChooseFileView(viewModel: ImportViewModel(phraseGenerator: PreviewPhraseGenerator(), purchases: PreviewPurchases(), freeTrial: PreviewFreeTrial()), goBack: {})
 }

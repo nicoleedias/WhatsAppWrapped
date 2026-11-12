@@ -33,6 +33,12 @@ nonisolated struct WrappedStats: Codable, Sendable {
         let start: Date
         let end: Date
     }
+
+    /// "mês" quando o período cabe em um mês (a retrospectiva grátis ou uma conversa recente), senão "ano".
+    var periodNoun: String {
+        let days = (ChatCalendar.calendar.dateComponents([.day], from: period.start, to: period.end).day ?? 0) + 1
+        return days <= 31 ? "mês" : "ano"
+    }
 }
 
 nonisolated struct PersonCount: Codable, Sendable, Hashable {

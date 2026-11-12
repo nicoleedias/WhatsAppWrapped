@@ -14,6 +14,7 @@
 
 /* Begin PBXFileReference section */
 		79022AB73076B0F700972A8B /* WhatsAppWrapped.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WhatsAppWrapped.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		79A1C0DE3100000100A1B2C3 /* Rebobina.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Rebobina.storekit; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -42,6 +43,7 @@
 			isa = PBXGroup;
 			children = (
 				79022AB93076B0F700972A8B /* WhatsAppWrapped */,
+				79A1C0DE3100000100A1B2C3 /* Rebobina.storekit */,
 				796D833E3092E56A00E5DBAC /* Frameworks */,
 				79022AB83076B0F700972A8B /* Products */,
 			);

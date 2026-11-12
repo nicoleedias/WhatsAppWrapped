@@ -19,7 +19,7 @@ struct LongMessageSlide: StorySlide {
             WavesDecoration.longMessage
         } content: {
             SlideHeader()
-            Text("O maior textão do ano foi...")
+            Text(message.title)
                 .textStyle(.slideTitle)
                 .accessibilityAddTraits(.isHeader)
                 .entrance()
@@ -40,6 +40,7 @@ struct LongMessageSlide: StorySlide {
 #Preview {
     LongMessageSlide(
         message: .init(
+            title: "O maior textão do ano foi...",
             text: "Eu tava pensando aqui sobre ontem e acho que a gente precisa conversar sobre a forma como a gente escolhe o restaurante de sexta",
             detail: "Bia · 1.284 caracteres · 14 de março, 02:13"
         )

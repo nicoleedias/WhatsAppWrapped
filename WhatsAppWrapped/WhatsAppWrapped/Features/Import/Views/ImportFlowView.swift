@@ -2,7 +2,7 @@
 //  ImportFlowView.swift
 //  WhatsAppWrapped
 //
-//  Mostra a tela da importação em que a pessoa está (escolher arquivo, carregando ou pronto), com fade entre elas.
+//  Mostra a tela da importação em que a pessoa está (escolher arquivo, carregando, compra ou pronto), com fade entre elas.
 //
 
 import SwiftUI
@@ -19,8 +19,10 @@ struct ImportFlowView: View {
                 ChooseFileView(viewModel: viewModel, goBack: goBack)
             case .loading:
                 LoadingView()
+            case .paywall:
+                PaywallView(viewModel: viewModel, goBack: goBack)
             case .ready:
-                ReadyView(year: viewModel.retrospectiveYear, showWrapped: showWrapped)
+                ReadyView(year: viewModel.retrospectiveYear, isTrial: viewModel.isTrialResult, showWrapped: showWrapped)
             }
         }
         .transition(.opacity)

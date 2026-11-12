@@ -43,7 +43,8 @@ struct ContentView: View {
                     SummaryView(
                         viewModel: SummaryViewModel(result: result),
                         segmentCount: WrappedViewModel.makeSlides(for: result.stats).count + 1,
-                        showRetrospectives: coordinator.showRetrospectives
+                        showRetrospectives: coordinator.showRetrospectives,
+                        unlockFullYear: unlockFullYear(for: result)
                     )
                 }
             }
@@ -57,6 +58,12 @@ struct ContentView: View {
         .onOpenURL(perform: coordinator.importFile)
     }
 
+    /// "Ver o ano inteiro" só no resumo da retrospectiva grátis.
+    private func unlockFullYear(for result: WrappedResult) -> (() -> Void)? {
+        guard result.isTrial else { return nil }
+        return { coordinator.unlockFullYear() }
+    }
+
     /// As telas do Figma não têm botão de voltar; o gesto da borda esquerda faz esse papel.
     private var backSwipe: some Gesture {
         DragGesture(minimumDistance: 20)
@@ -67,5 +74,10 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView(coordinator: AppCoordinator(phraseGenerator: PreviewPhraseGenerator(), store: PreviewRetrospectiveStore()))
+    ContentView(coordinator: AppCoordinator(
+        phraseGenerator: PreviewPhraseGenerator(),
+        store: PreviewRetrospectiveStore(),
+        purchases: PreviewPurchases(),
+        freeTrial: PreviewFreeTrial()
+    ))
 }
