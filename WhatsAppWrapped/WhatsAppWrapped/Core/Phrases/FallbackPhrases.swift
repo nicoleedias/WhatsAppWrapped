@@ -44,7 +44,9 @@ nonisolated enum FallbackPhrases {
         case .calls:
             callPhrase(averageMinutes: (stats.calls.averageDuration ?? 0) / 60)
         case .summary:
-            SlidePhrase(emoji: "💜", text: "Um ano inteiro de conversa. Que venha o próximo!")
+            stats.periodNoun == "mês"
+                ? SlidePhrase(emoji: "💜", text: "Um mês inteiro de conversa. Que venham os próximos!")
+                : SlidePhrase(emoji: "💜", text: "Um ano inteiro de conversa. Que venha o próximo!")
         }
     }
 

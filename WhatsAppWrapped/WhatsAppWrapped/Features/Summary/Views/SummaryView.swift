@@ -14,6 +14,8 @@ struct SummaryView: View {
     var segmentCount = 12
     /// "Minhas retrospectivas": a lista com todas as retrospectivas salvas.
     let showRetrospectives: () -> Void
+    /// "Ver o ano inteiro": só na retrospectiva grátis de 30 dias.
+    var unlockFullYear: (() -> Void)?
 
     @State private var shareImage: Image?
 
@@ -28,12 +30,19 @@ struct SummaryView: View {
             Spacer(minLength: 16)
             VStack(spacing: 8) {
                 shareButton
+                if let unlockFullYear {
+                    Button(action: unlockFullYear) {
+                        Text("Ver o ano inteiro")
+                            .textStyle(TextStyle(size: 16, weight: .semibold, relativeTo: .callout))
+                    }
+                    .buttonStyle(.rebobina(.secondary))
+                }
                 // No Figma, o botão de contorno tem texto de 16 pt, um degrau abaixo do principal.
                 Button(action: showRetrospectives) {
                     Text("Minhas retrospectivas")
                         .textStyle(TextStyle(size: 16, weight: .semibold, relativeTo: .callout))
                 }
-                .buttonStyle(.rebobina(.secondary))
+                .buttonStyle(.rebobina(unlockFullYear == nil ? .secondary : .ghost))
             }
         }
         .hapticOnAppear(.success, delay: 0.3)
@@ -64,6 +73,10 @@ struct SummaryView: View {
 
 #Preview("Duas pessoas") {
     SummaryView(viewModel: SummaryViewModel(result: .preview), showRetrospectives: {})
+}
+
+#Preview("Grátis") {
+    SummaryView(viewModel: SummaryViewModel(result: .preview), showRetrospectives: {}, unlockFullYear: {})
 }
 
 #Preview("Grupo") {

@@ -1,0 +1,60 @@
+{
+  "appPolicies" : {
+    "eula" : "",
+    "policies" : [
+      {
+        "locale" : "pt_BR",
+        "policyText" : "",
+        "policyURL" : ""
+      }
+    ]
+  },
+  "identifier" : "5E1D3A27",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+    {
+      "displayPrice" : "5.90",
+      "familyShareable" : false,
+      "internalID" : "6755000001",
+      "localizations" : [
+        {
+          "description" : "Os últimos 12 meses de uma conversa, com todos os slides.",
+          "displayName" : "Retrospectiva completa",
+          "locale" : "pt_BR"
+        }
+      ],
+      "productID" : "nicole.Rebobina.app.retrospectiva",
+      "referenceName" : "Retrospectiva completa",
+      "type" : "Consumable"
+    }
+  ],
+  "settings" : {
+    "_askToBuyEnabled" : false,
+    "_billingGracePeriodEnabled" : false,
+    "_billingIssuesEnabled" : false,
+    "_disableDialogs" : false,
+    "_failTransactionsEnabled" : false,
+    "_locale" : "pt_BR",
+    "_renewalBillingIssuesEnabled" : false,
+    "_storefront" : "BRA",
+    "_storeKitErrors" : [
+
+    ],
+    "_timeRate" : 0
+  },
+  "subscriptionBundleGroups" : [
+
+  ],
+  "subscriptionGroups" : [
+
+  ],
+  "subscriptionSuiteGroups" : [
+
+  ],
+  "version" : {
+    "major" : 6,
+    "minor" : 3
+  }
+}

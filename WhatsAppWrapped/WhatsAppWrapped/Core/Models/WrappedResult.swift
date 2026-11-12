@@ -11,4 +11,6 @@ import Foundation
 nonisolated struct WrappedResult: Sendable {
     let stats: WrappedStats
     let phrases: SlidePhrases
+    /// A retrospectiva grátis, só com os últimos 30 dias.
+    var isTrial = false
 }

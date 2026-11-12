@@ -9,9 +9,12 @@ import SwiftUI
 
 struct ReadyView: View {
     let year: Int?
+    /// A retrospectiva grátis, só com os últimos 30 dias.
+    var isTrial = false
     let showWrapped: () -> Void
 
     private var message: String {
+        if isTrial { return "Seus últimos 30 dias de conversa estão prontos." }
         guard let year else { return "Sua retrospectiva está pronta." }
         return "Sua retrospectiva \(year.formatted(.number.grouping(.never))) está pronta."
     }
@@ -37,4 +40,8 @@ struct ReadyView: View {
 
 #Preview {
     ReadyView(year: 2026, showWrapped: {})
+}
+
+#Preview("Grátis") {
+    ReadyView(year: 2026, isTrial: true, showWrapped: {})
 }

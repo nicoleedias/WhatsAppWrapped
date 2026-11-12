@@ -36,8 +36,13 @@ final class AppCoordinator {
     /// Slides em andamento. Recriado a cada vez que os slides começam do primeiro.
     private(set) var wrapped: WrappedViewModel?
 
-    init(phraseGenerator: any SlidePhraseGenerator, store: any RetrospectiveStore) {
-        importer = ImportViewModel(phraseGenerator: phraseGenerator)
+    init(
+        phraseGenerator: any SlidePhraseGenerator,
+        store: any RetrospectiveStore,
+        purchases: any RetrospectivePurchases,
+        freeTrial: any FreeTrial
+    ) {
+        importer = ImportViewModel(phraseGenerator: phraseGenerator, purchases: purchases, freeTrial: freeTrial)
         retrospectives = RetrospectivesViewModel(store: store)
         step = retrospectives.isEmpty ? .onboarding : .retrospectives
     }
@@ -61,6 +66,9 @@ final class AppCoordinator {
         switch step {
         case .exportGuide: step = retrospectives.isEmpty ? .onboarding : .retrospectives
         case .importing where importer.phase == .chooseFile: step = .exportGuide
+        case .importing where importer.phase == .paywall:
+            importer.reset()
+            showRetrospectives()
         case .wrapped, .summary: showRetrospectives()
         case .retrospectives, .onboarding, .importing: break
         }
@@ -96,6 +104,16 @@ final class AppCoordinator {
     /// "Rever histórias" no menu.
     func replay(_ retrospective: SavedRetrospective) {
         play(retrospective.result)
+    }
+
+    /// "Ver o ano inteiro" no resumo da retrospectiva grátis. Logo depois de fazê-la, a conversa ainda está
+    /// na memória e vai direto para a compra; aberta pela lista, é preciso exportar de novo.
+    func unlockFullYear() {
+        if importer.startFullYear() {
+            step = .importing
+        } else {
+            newRetrospective()
+        }
     }
 
     /// Fim dos slides.
