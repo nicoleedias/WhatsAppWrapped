@@ -31,18 +31,29 @@ final class AppCoordinator {
     private(set) var step: Step
     let importer: ImportViewModel
     let retrospectives: RetrospectivesViewModel
+    /// Permissão para usar o Gemini nas frases: pedida na importação, trocada no cartão de "Minhas retrospectivas".
+    let aiConsent: AIConsent
     /// Retrospectiva aberta nos slides ou no resumo: a que acabou de ser feita ou uma da lista.
     private(set) var current: WrappedResult?
     /// Slides em andamento. Recriado a cada vez que os slides começam do primeiro.
     private(set) var wrapped: WrappedViewModel?
+    /// Revendo uma retrospectiva da lista (os slides ganham o X); falso logo depois de gerar.
+    private var isRevisiting = false
 
     init(
         phraseGenerator: any SlidePhraseGenerator,
         store: any RetrospectiveStore,
         purchases: any RetrospectivePurchases,
-        freeTrial: any FreeTrial
+        freeTrial: any FreeTrial,
+        aiConsent: AIConsent
     ) {
-        importer = ImportViewModel(phraseGenerator: phraseGenerator, purchases: purchases, freeTrial: freeTrial)
+        self.aiConsent = aiConsent
+        importer = ImportViewModel(
+            phraseGenerator: phraseGenerator,
+            purchases: purchases,
+            freeTrial: freeTrial,
+            aiConsent: aiConsent
+        )
         retrospectives = RetrospectivesViewModel(store: store)
         step = retrospectives.isEmpty ? .onboarding : .retrospectives
     }
@@ -66,6 +77,8 @@ final class AppCoordinator {
         switch step {
         case .exportGuide: step = retrospectives.isEmpty ? .onboarding : .retrospectives
         case .importing where importer.phase == .chooseFile: step = .exportGuide
+        // Com o sheet da IA aberto, o gesto de voltar só fecha o pedido (nada é enviado).
+        case .importing where importer.phase == .consent: importer.cancelConsent()
         case .importing where importer.phase == .paywall:
             importer.reset()
             showRetrospectives()
@@ -85,6 +98,7 @@ final class AppCoordinator {
     func showWrapped() {
         guard let result = importer.result else { return }
         retrospectives.save(result)
+        isRevisiting = false
         play(result)
     }
 
@@ -95,14 +109,16 @@ final class AppCoordinator {
         step = .retrospectives
     }
 
-    /// "Ver resumo" ou toque no cartão.
+    /// Toque no cartão.
     func openSummary(_ retrospective: SavedRetrospective) {
         current = retrospective.result
+        isRevisiting = true
         step = .summary
     }
 
     /// "Rever histórias" no menu.
     func replay(_ retrospective: SavedRetrospective) {
+        isRevisiting = true
         play(retrospective.result)
     }
 
@@ -116,15 +132,23 @@ final class AppCoordinator {
         }
     }
 
+    /// Toque no terço esquerdo do resumo: volta para o último slide, como nas histórias. Dali dá para
+    /// voltar até o primeiro.
+    func backFromSummary() {
+        guard let current else { return }
+        play(current, startAtEnd: true)
+    }
+
     /// Fim dos slides.
     func showSummary() {
         guard current != nil else { return }
         step = .summary
     }
 
-    private func play(_ result: WrappedResult) {
+    private func play(_ result: WrappedResult, startAtEnd: Bool = false) {
         current = result
-        wrapped = WrappedViewModel(result: result) { [weak self] in self?.showSummary() }
+        let close: (() -> Void)? = isRevisiting ? { [weak self] in self?.showRetrospectives() } : nil
+        wrapped = WrappedViewModel(result: result, startAtEnd: startAtEnd, close: close) { [weak self] in self?.showSummary() }
         step = .wrapped
     }
 }

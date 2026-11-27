@@ -3,7 +3,7 @@
 //  WhatsAppWrapped
 //
 //  Telas 03 e 03b: escolher o .zip ou .txt no app Arquivos. Quando o arquivo não serve,
-//  o alerta desce do topo e o card do arquivo fica vermelho e balança.
+//  o alerta aparece no meio da tela e o card do arquivo fica vermelho e balança.
 //
 
 import SwiftUI
@@ -34,7 +34,7 @@ struct ChooseFileView: View {
                 .buttonStyle(.rebobina(.primary))
                 .disabled(viewModel.selectedFile == nil)
         }
-        .topAlert(isPresented: viewModel.failure != nil) {
+        .centeredAlert(isPresented: viewModel.failure != nil) {
             AlertBanner(
                 kind: .error,
                 title: viewModel.failure?.title ?? "",
@@ -53,5 +53,5 @@ struct ChooseFileView: View {
 }
 
 #Preview {
-    ChooseFileView(viewModel: ImportViewModel(phraseGenerator: PreviewPhraseGenerator(), purchases: PreviewPurchases(), freeTrial: PreviewFreeTrial()), goBack: {})
+    ChooseFileView(viewModel: ImportViewModel(phraseGenerator: PreviewPhraseGenerator(), purchases: PreviewPurchases(), freeTrial: PreviewFreeTrial(), aiConsent: AIConsent(defaults: nil)), goBack: {})
 }

@@ -22,7 +22,9 @@ struct PaywallView: View {
             ConcentricDecoration.ready
         } content: {
             TitleBlock(label: "Retrospectiva completa", title: "Rebobine o ano inteiro", back: goBack)
-            Text("Os últimos 12 meses desta conversa, com todos os slides e frases feitas sob medida para vocês.")
+            Text(viewModel.usesAI
+                 ? "Os últimos 12 meses desta conversa, com todos os slides e frases feitas especialmente para vocês."
+                 : "Os últimos 12 meses desta conversa, com todos os slides.")
                 .textStyle(.bodyL)
                 .entrance(delay: 0.2)
             VStack(alignment: .leading, spacing: 4) {
@@ -64,7 +66,8 @@ struct PaywallView: View {
         viewModel: ImportViewModel(
             phraseGenerator: PreviewPhraseGenerator(),
             purchases: PreviewPurchases(),
-            freeTrial: PreviewFreeTrial()
+            freeTrial: PreviewFreeTrial(),
+            aiConsent: AIConsent(defaults: nil)
         ),
         goBack: {}
     )

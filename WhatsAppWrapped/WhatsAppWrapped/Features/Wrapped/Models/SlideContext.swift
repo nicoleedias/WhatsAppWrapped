@@ -20,6 +20,8 @@ struct SlideContext {
     /// nil esconde o botão "Compartilhar" (slides interativos e a imagem compartilhada).
     var share: (() -> Void)?
     var advance: () -> Void = {}
+    /// "Fechar" (X): só ao rever uma retrospectiva da lista.
+    var close: (() -> Void)?
 }
 
 extension EnvironmentValues {

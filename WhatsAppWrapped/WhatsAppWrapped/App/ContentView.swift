@@ -20,6 +20,7 @@ struct ContentView: View {
             case .retrospectives:
                 RetrospectivesView(
                     viewModel: coordinator.retrospectives,
+                    aiConsent: coordinator.aiConsent,
                     openSummary: coordinator.openSummary,
                     replay: coordinator.replay,
                     newRetrospective: coordinator.newRetrospective
@@ -44,6 +45,7 @@ struct ContentView: View {
                         viewModel: SummaryViewModel(result: result),
                         segmentCount: WrappedViewModel.makeSlides(for: result.stats).count + 1,
                         showRetrospectives: coordinator.showRetrospectives,
+                        previousSlide: coordinator.backFromSummary,
                         unlockFullYear: unlockFullYear(for: result)
                     )
                 }
@@ -78,6 +80,7 @@ struct ContentView: View {
         phraseGenerator: PreviewPhraseGenerator(),
         store: PreviewRetrospectiveStore(),
         purchases: PreviewPurchases(),
-        freeTrial: PreviewFreeTrial()
+        freeTrial: PreviewFreeTrial(),
+        aiConsent: AIConsent(defaults: nil)
     ))
 }
