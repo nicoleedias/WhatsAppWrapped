@@ -18,6 +18,7 @@ struct PrivacyNotice: View {
                 .accessibilityHidden(true)
             Text(text)
                 .textStyle(.bodyS)
+                .fixedSize(horizontal: false, vertical: true)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
         .foregroundStyle(.ink)

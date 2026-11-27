@@ -21,8 +21,10 @@ struct WhatsAppWrappedApp: App {
         FirebaseApp.configure()
 
         let freeTrial = KeychainFreeTrial()
+        let aiConsent = AIConsent()
         #if DEBUG
         if CommandLine.arguments.contains("-resetFreeTrial") { freeTrial.reset() }
+        if CommandLine.arguments.contains("-resetAIConsent") { aiConsent.reset() }
         #endif
         // Criado na abertura para já ouvir as compras que terminaram fora do app (Ask to Buy, app fechado no meio).
         let purchases = StoreKitPurchases()
@@ -30,7 +32,8 @@ struct WhatsAppWrappedApp: App {
             phraseGenerator: GeminiPhraseGenerator(),
             store: FileRetrospectiveStore(),
             purchases: purchases,
-            freeTrial: freeTrial
+            freeTrial: freeTrial,
+            aiConsent: aiConsent
         ))
         Task { await purchases.prepare() }
     }

@@ -31,6 +31,8 @@ final class AppCoordinator {
     private(set) var step: Step
     let importer: ImportViewModel
     let retrospectives: RetrospectivesViewModel
+    /// Permissão para usar o Gemini nas frases: pedida na importação, trocada no cartão de "Minhas retrospectivas".
+    let aiConsent: AIConsent
     /// Retrospectiva aberta nos slides ou no resumo: a que acabou de ser feita ou uma da lista.
     private(set) var current: WrappedResult?
     /// Slides em andamento. Recriado a cada vez que os slides começam do primeiro.
@@ -40,9 +42,16 @@ final class AppCoordinator {
         phraseGenerator: any SlidePhraseGenerator,
         store: any RetrospectiveStore,
         purchases: any RetrospectivePurchases,
-        freeTrial: any FreeTrial
+        freeTrial: any FreeTrial,
+        aiConsent: AIConsent
     ) {
-        importer = ImportViewModel(phraseGenerator: phraseGenerator, purchases: purchases, freeTrial: freeTrial)
+        self.aiConsent = aiConsent
+        importer = ImportViewModel(
+            phraseGenerator: phraseGenerator,
+            purchases: purchases,
+            freeTrial: freeTrial,
+            aiConsent: aiConsent
+        )
         retrospectives = RetrospectivesViewModel(store: store)
         step = retrospectives.isEmpty ? .onboarding : .retrospectives
     }
@@ -66,6 +75,8 @@ final class AppCoordinator {
         switch step {
         case .exportGuide: step = retrospectives.isEmpty ? .onboarding : .retrospectives
         case .importing where importer.phase == .chooseFile: step = .exportGuide
+        // Com o sheet da IA aberto, o gesto de voltar só fecha o pedido (nada é enviado).
+        case .importing where importer.phase == .consent: importer.cancelConsent()
         case .importing where importer.phase == .paywall:
             importer.reset()
             showRetrospectives()

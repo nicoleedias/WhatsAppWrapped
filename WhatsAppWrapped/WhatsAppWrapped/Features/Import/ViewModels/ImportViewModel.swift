@@ -10,6 +10,9 @@
 //  quem não tem vê a tela de compra. A conversa fica na memória até `reset()`, para dar para comprar
 //  o ano inteiro logo depois de ver a versão grátis sem exportar de novo.
 //
+//  Antes do primeiro envio ao Gemini, a pessoa escolhe entre permitir (`AIConsent`) ou seguir sem IA, com as frases
+//  prontas e nada enviado. A escolha fica guardada e muda no cartão "Frases com IA" de "Minhas retrospectivas".
+//
 
 import Foundation
 import Observation
@@ -19,7 +22,8 @@ final class ImportViewModel {
     enum Phase: Equatable {
         case chooseFile     // 03 e 03b (com erro)
         case loading        // 04–06
-        case paywall        // compra da retrospectiva completa
+        case consent        // permissão para usar a IA, até a pessoa permitir
+        case paywall       // compra da retrospectiva completa
         case ready          // 07 Prontinho
     }
 
@@ -48,15 +52,28 @@ final class ImportViewModel {
     private let phraseGenerator: any SlidePhraseGenerator
     private let purchases: any RetrospectivePurchases
     private let freeTrial: any FreeTrial
+    private let aiConsent: AIConsent
     /// Conversa lida, guardada só na memória e só até `reset()`.
     private var chat: Chat?
     private var importTask: Task<Void, Never>?
 
-    init(phraseGenerator: any SlidePhraseGenerator, purchases: any RetrospectivePurchases, freeTrial: any FreeTrial) {
+    init(
+        phraseGenerator: any SlidePhraseGenerator,
+        purchases: any RetrospectivePurchases,
+        freeTrial: any FreeTrial,
+        aiConsent: AIConsent
+    ) {
         self.phraseGenerator = phraseGenerator
         self.purchases = purchases
         self.freeTrial = freeTrial
+        self.aiConsent = aiConsent
     }
+
+    /// As frases vão ser feitas pela IA. Muda o texto da tela de compra.
+    var usesAI: Bool { aiConsent.isAllowed }
+
+    /// A pessoa ainda não escolheu entre permitir a IA e seguir sem ela.
+    private var needsConsent: Bool { aiConsent.decision == nil }
 
     /// Ano mostrado em "Sua retrospectiva 2026 está pronta" (o fim do período analisado).
     var retrospectiveYear: Int? {
@@ -113,7 +130,9 @@ final class ImportViewModel {
     func startFullYear() -> Bool {
         guard let chat else { return false }
         result = nil
-        if purchases.hasCredit {
+        if needsConsent {
+            phase = .consent
+        } else if purchases.hasCredit {
             run { try await self.generate(from: chat, isTrial: false) }
         } else {
             showPaywall()
@@ -149,10 +168,38 @@ final class ImportViewModel {
         }
     }
 
-    /// Com uma compra não usada, a retrospectiva completa sai direto. Sem compra, a primeira é a grátis
-    /// de 30 dias e as próximas passam pela tela de compra.
+    /// Fechar o sheet da IA sem responder: nada é enviado, a conversa é descartada e o pedido volta na próxima.
+    func cancelConsent() {
+        guard phase == .consent else { return }
+        reset()
+    }
+
+    /// "Permitir e continuar" na tela de permissão.
+    func allowAI() {
+        aiConsent.decide(.allowed)
+        guard let chat else {
+            phase = .chooseFile
+            return
+        }
+        run { try await self.continueWith(chat) }
+    }
+
+    /// "Continuar sem IA": frases prontas e nada enviado. Fica guardado até a pessoa ativar no cartão da lista.
+    func continueWithoutAI() {
+        aiConsent.decide(.declined)
+        guard let chat else {
+            phase = .chooseFile
+            return
+        }
+        run { try await self.continueWith(chat) }
+    }
+
+    /// Primeiro a permissão da IA. Depois: com uma compra não usada, a retrospectiva completa sai direto;
+    /// sem compra, a primeira é a grátis de 30 dias e as próximas passam pela tela de compra.
     private func continueWith(_ chat: Chat) async throws {
-        if purchases.hasCredit {
+        if needsConsent {
+            phase = .consent
+        } else if purchases.hasCredit {
             try await generate(from: chat, isTrial: false)
         } else if freeTrial.isAvailable {
             try await generate(from: chat, isTrial: true)
@@ -180,7 +227,9 @@ final class ImportViewModel {
         phase = .loading
         async let minimumLoading: Void = Task.sleep(for: Self.minimumLoadingTime)
         let stats = await WrappedService.makeStats(for: chat, isTrial: isTrial)
-        let phrases = try await SlidePhraseService.phrases(for: stats, using: phraseGenerator)
+        let phrases = usesAI
+            ? try await SlidePhraseService.phrases(for: stats, using: phraseGenerator)
+            : SlidePhraseService.fallbackPhrases(for: stats)
         try await minimumLoading
 
         if isTrial {

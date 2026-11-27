@@ -10,6 +10,7 @@ import SwiftUI
 
 struct RetrospectivesView: View {
     @Bindable var viewModel: RetrospectivesViewModel
+    let aiConsent: AIConsent
     let openSummary: (SavedRetrospective) -> Void
     let replay: (SavedRetrospective) -> Void
     let newRetrospective: () -> Void
@@ -51,8 +52,6 @@ struct RetrospectivesView: View {
 
     @ViewBuilder
     private var listContent: some View {
-        PrivacyNotice()
-            .entrance(delay: 0.1)
         ScrollView {
             LazyVStack(spacing: 12) {
                 ForEach(Array(viewModel.cards.enumerated()), id: \.element.id) { index, card in
@@ -62,9 +61,12 @@ struct RetrospectivesView: View {
                         open: { open(card.id, with: openSummary) },
                         showActions: { viewModel.showActions(for: card.id) }
                     )
-                    .entrance(delay: 0.2 + Double(min(index, 5)) * Motion.cascadeStep)
+                    .entrance(delay: 0.1 + Double(min(index, 5)) * Motion.cascadeStep)
                 }
             }
+            RetrospectivesFooter(consent: aiConsent)
+                .padding(.vertical, 24)
+                .entrance(delay: 0.3)
         }
         .scrollIndicators(.hidden)
         .scrollBounceBehavior(.basedOnSize)
@@ -79,7 +81,8 @@ struct RetrospectivesView: View {
         Spacer(minLength: 0)
         EmptyRetrospectives()
         Spacer(minLength: 0)
-        PrivacyNotice()
+        RetrospectivesFooter(consent: aiConsent)
+            .entrance(delay: 0.4)
         Button("Rebobinar", action: newRetrospective)
             .buttonStyle(.rebobina(.primary))
     }
@@ -128,6 +131,7 @@ struct RetrospectivesView: View {
 #Preview("Lista") {
     RetrospectivesView(
         viewModel: RetrospectivesViewModel(store: PreviewRetrospectiveStore()),
+        aiConsent: AIConsent(defaults: nil),
         openSummary: { _ in }, replay: { _ in }, newRetrospective: {}
     )
 }
@@ -135,6 +139,7 @@ struct RetrospectivesView: View {
 #Preview("Vazio") {
     RetrospectivesView(
         viewModel: RetrospectivesViewModel(store: PreviewRetrospectiveStore([])),
+        aiConsent: AIConsent(defaults: nil),
         openSummary: { _ in }, replay: { _ in }, newRetrospective: {}
     )
 }
