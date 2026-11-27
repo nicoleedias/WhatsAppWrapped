@@ -36,11 +36,10 @@ struct RetrospectivesView: View {
         .sheet(item: $viewModel.actionsTarget) { retrospective in
             RetrospectiveActions(
                 shareImage: shareImage,
-                openSummary: { act { openSummary(retrospective) } },
                 replay: { act { replay(retrospective) } },
                 delete: viewModel.requestDeletion
             )
-            .presentationDetents([.height(311)])
+            .presentationDetents([.height(RetrospectiveActions.height)])
             .presentationDragIndicator(.visible)
             .presentationBackground(.cream)
             .presentationCornerRadius(32)

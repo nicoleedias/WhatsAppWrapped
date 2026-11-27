@@ -2,7 +2,8 @@
 //  StoryHeader.swift
 //  WhatsAppWrapped
 //
-//  Cabeçalho das histórias: barra de progresso em segmentos de 3 pt + rótulo + "Compartilhar".
+//  Cabeçalho das histórias: barra de progresso em segmentos de 3 pt + rótulo + "Compartilhar" + "Fechar".
+//  Sem `onClose`, o X some (a primeira vez, logo depois de gerar).
 //  Sem `onShare`, o botão some (ex.: slides de "calculando" e quiz). Sem `showsProgress`, a barra some
 //  (imagem de compartilhar). As cores seguem o fundo da tela.
 //
@@ -16,6 +17,7 @@ struct StoryHeader: View {
     var segmentCount = 12
     var showsProgress = true
     var onShare: (() -> Void)?
+    var onClose: (() -> Void)?
 
     var body: some View {
         VStack(spacing: 24) {
@@ -26,6 +28,7 @@ struct StoryHeader: View {
                 Text(label).textStyle(.label)
                 Spacer()
                 if let onShare { ShareButton(action: onShare) }
+                if let onClose { CloseButton(action: onClose).padding(.trailing, -5) }
             }
             .frame(minHeight: 35)
         }
@@ -54,7 +57,7 @@ struct StoryProgressBar: View {
 
 #Preview {
     VStack(spacing: 32) {
-        StoryHeader(label: "Mensagens", currentIndex: 3, onShare: {})
+        StoryHeader(label: "Mensagens", currentIndex: 3, onShare: {}, onClose: {})
             .padding().background(.coral).environment(\.backdrop, .coral)
         StoryHeader(label: "Emoji", currentIndex: 5)
             .padding().background(.plum).environment(\.backdrop, .plum)

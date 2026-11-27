@@ -35,6 +35,7 @@ struct WrappedView: View {
         .sensoryFeedback(.selection, trigger: viewModel.currentIndex)
         .accessibilityAction(named: "Próxima história", viewModel.skipForward)
         .accessibilityAction(named: "História anterior", viewModel.goBack)
+        .accessibilityAction(named: "Fechar") { viewModel.close?() }
         .sheet(item: $shareItem) { item in
             ActivitySheet(item: item)
                 .presentationDetents([.medium, .large])
@@ -52,7 +53,8 @@ struct WrappedView: View {
             chatName: viewModel.chatName,
             isPoster: isPoster,
             share: slide.isShareable && !isPoster ? { share(slide) } : nil,
-            advance: viewModel.advance
+            advance: viewModel.advance,
+            close: isPoster ? nil : viewModel.close
         )
     }
 

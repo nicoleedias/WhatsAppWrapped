@@ -45,6 +45,7 @@ struct ContentView: View {
                         viewModel: SummaryViewModel(result: result),
                         segmentCount: WrappedViewModel.makeSlides(for: result.stats).count + 1,
                         showRetrospectives: coordinator.showRetrospectives,
+                        previousSlide: coordinator.backFromSummary,
                         unlockFullYear: unlockFullYear(for: result)
                     )
                 }
