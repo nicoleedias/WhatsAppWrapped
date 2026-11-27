@@ -28,6 +28,8 @@ struct TitleBlock: View {
         Text(title)
             .textStyle(titleStyle)
             .minimumScaleFactor(0.7)
+            // Nunca vira "Como exportar sua co…": quem cede espaço é o Spacer da tela.
+            .fixedSize(horizontal: false, vertical: true)
             .entrance(delay: 0.1)
             .accessibilityAddTraits(.isHeader)
     }

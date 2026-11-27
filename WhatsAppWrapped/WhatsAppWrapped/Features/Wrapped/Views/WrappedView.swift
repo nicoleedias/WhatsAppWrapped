@@ -29,7 +29,6 @@ struct WrappedView: View {
                 if location.x < proxy.size.width / 3 { viewModel.goBack() } else { viewModel.skipForward() }
             }
         }
-        .ignoresSafeArea()
         .animation(Motion.screenTransition, value: viewModel.currentIndex)
         // Um "clique" leve a cada história, como virar uma página.
         .sensoryFeedback(.selection, trigger: viewModel.currentIndex)

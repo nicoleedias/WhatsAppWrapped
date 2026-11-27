@@ -34,11 +34,14 @@ struct ExportStepRow: View {
                 .foregroundStyle(.coralDeep)
             VStack(alignment: .leading, spacing: 4) {
                 Text(step.title).textStyle(.button)
-                Text(step.detail).textStyle(.bodyS)
+                Text(step.detail)
+                    .textStyle(.bodyS)
+                    .fixedSize(horizontal: false, vertical: true)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding(.vertical, 16)
+        // 12 (e não 16) para os 4 passos caberem sem empurrar o título para cima no iPhone 17.
+        .padding(.vertical, 12)
         .accessibilityElement(children: .combine)
     }
 }

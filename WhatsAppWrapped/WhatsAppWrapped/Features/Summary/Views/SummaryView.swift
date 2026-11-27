@@ -22,16 +22,30 @@ struct SummaryView: View {
 
     @State private var shareImage: Image?
     @State private var width: CGFloat = 0
+    @State private var cardHeight: CGFloat = 0
+    @State private var availableHeight: CGFloat = 0
+
+    private var cardScale: CGFloat {
+        guard cardHeight > 0, availableHeight > 0 else { return 1 }
+        return min(1, availableHeight / cardHeight)
+    }
 
     var body: some View {
-        ScreenContainer(backdrop: .plum) {
+        ScreenContainer(backdrop: .plum, bottomPadding: 40) {
             BurstDecoration.summary
         } content: {
-            VStack(spacing: 8) {
+            // Quando o card não cabe (iPhones menores ou com o "Ver o ano inteiro"), ele encolhe por inteiro
+            // em vez de cortar; a barra e os botões ficam no lugar.
+            VStack(spacing: 16) {
                 StoryProgressBar(currentIndex: segmentCount - 1, segmentCount: segmentCount)
                 SummaryCard(viewModel: viewModel)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { cardHeight = $0 }
+                    .scaleEffect(cardScale, anchor: .top)
+                    .frame(minHeight: 0, maxHeight: .infinity, alignment: .top)
+                    .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { availableHeight = $0 }
             }
-            Spacer(minLength: 16)
+            .frame(maxHeight: .infinity, alignment: .top)
             VStack(spacing: 8) {
                 shareButton
                 if let unlockFullYear {

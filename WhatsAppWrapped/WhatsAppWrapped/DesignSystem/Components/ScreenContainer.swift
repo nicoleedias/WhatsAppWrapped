@@ -3,7 +3,8 @@
 //  WhatsAppWrapped
 //
 //  Base de todas as telas: fundo chapado de ponta a ponta, decoração atrás, conteúdo com as margens do grid
-//  (laterais 32, topo 64, base 48) e um rodapé opcional fixo na base, como nos frames de 393×852 do Figma.
+//  (laterais 32, topo 24 abaixo da área segura, base 48 da borda) e um rodapé opcional fixo na base.
+//  O topo conta a partir da área segura para o conteúdo não encostar na Dynamic Island em nenhum iPhone.
 //  Na imagem do story (`isStoryPoster`), as margens são as do quadro 9:16 do `StoryPoster`.
 //
 
@@ -23,7 +24,7 @@ struct ScreenContainer<Content: View, Decoration: View, Footer: View>: View {
             content
         }
         .padding(.horizontal, isStoryPoster ? StoryPoster.horizontalPadding : 32)
-        .padding(.top, isStoryPoster ? StoryPoster.topPadding : 64)
+        .padding(.top, isStoryPoster ? StoryPoster.topPadding : 24)
         .padding(.bottom, isStoryPoster ? StoryPoster.bottomPadding : bottomPadding)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .background {
@@ -32,13 +33,14 @@ struct ScreenContainer<Content: View, Decoration: View, Footer: View>: View {
                 decoration
             }
             .clipped()
+            .ignoresSafeArea()
         }
         .overlay(alignment: .bottom) {
             footer
         }
         .foregroundStyle(backdrop.foreground)
         .environment(\.backdrop, backdrop)
-        .ignoresSafeArea()
+        .ignoresSafeArea(edges: isStoryPoster ? .all : .bottom)
     }
 }
 
