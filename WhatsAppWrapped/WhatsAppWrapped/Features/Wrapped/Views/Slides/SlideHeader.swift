@@ -30,7 +30,8 @@ struct SlideHeader: View {
             currentIndex: context.index,
             segmentCount: context.segmentCount,
             showsProgress: !context.isPoster,
-            onShare: context.share
+            onShare: context.share,
+            onClose: context.close
         )
     }
 }

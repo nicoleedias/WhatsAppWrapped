@@ -31,4 +31,9 @@ nonisolated enum SlidePhraseService {
             throw Unavailable(underlying: error)
         }
     }
+
+    /// Só frases prontas, sem chamar a IA: quando a pessoa escolhe continuar sem ela.
+    static func fallbackPhrases(for stats: WrappedStats) -> SlidePhrases {
+        FallbackPhrases.phrases(for: stats, slides: PhraseSlide.applicable(to: stats))
+    }
 }

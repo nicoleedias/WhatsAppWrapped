@@ -67,6 +67,18 @@ extension View {
         }
         .animation(Motion.pop, value: isPresented)
     }
+
+    /// Mostra o alerta no meio da tela (com pop) enquanto `isPresented` for verdadeiro.
+    func centeredAlert(isPresented: Bool, @ViewBuilder alert: () -> AlertBanner) -> some View {
+        overlay {
+            if isPresented {
+                alert()
+                    .padding(.horizontal, 32)
+                    .transition(.scale(scale: 0.92).combined(with: .opacity))
+            }
+        }
+        .animation(Motion.pop, value: isPresented)
+    }
 }
 
 #Preview {

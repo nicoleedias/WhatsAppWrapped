@@ -20,13 +20,18 @@ final class WrappedViewModel {
     private let phrases: SlidePhrases
     /// Chamado depois do último slide.
     private let finish: () -> Void
+    /// "Fechar": volta para a lista. nil na primeira vez, logo depois de gerar.
+    let close: (() -> Void)?
 
-    init(result: WrappedResult, finish: @escaping () -> Void) {
+    /// `startAtEnd`: abre no último slide, ao voltar do resumo com um toque no terço esquerdo.
+    init(result: WrappedResult, startAtEnd: Bool = false, close: (() -> Void)? = nil, finish: @escaping () -> Void) {
+        self.close = close
         stats = result.stats
         phrases = result.phrases
         chatName = SummaryViewModel(result: result).title
         self.finish = finish
         slides = Self.makeSlides(for: result.stats)
+        if startAtEnd { currentIndex = max(slides.count - 1, 0) }
     }
 
     var currentSlide: WrappedSlide? {
